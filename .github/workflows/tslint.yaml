@@ -1,4 +1,4 @@
-name: Node CI environment
+name: ESLint
 
 on: [pull_request]
 
@@ -21,7 +21,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: npm install
-        working-directory: ./application
+        working-directory: .
         run: npm i --ignore-scripts
 
       - name: Run ESLint
