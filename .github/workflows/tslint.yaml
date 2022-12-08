@@ -1,15 +1,32 @@
-name: TSLint checks
-on: [push]
+name: Node CI environment
+
+on: [pull_request]
+
 jobs:
-  job:
+  lint:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+
+    strategy:
+      matrix:
+        node-version: [10.x]
+
     steps:
       - uses: actions/checkout@v1
-      - name: Prepare
-        run: npm ci
-      - name: Lint
-        uses: mooyoul/tslint-actions@v1.1.1
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          pattern: '*.ts'
+          fetch-depth: 1
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: npm install
+        working-directory: ./application
+        run: npm i --ignore-scripts
+
+      - name: Run ESLint
+        uses: ninosaurus/eslint-check@v5
+        with:
+          eslint-config-path: "./,eslintrc.cjs"
+          custom-directory: "."
+          repo-token: ${{secrets.GITHUB_TOKEN}}
