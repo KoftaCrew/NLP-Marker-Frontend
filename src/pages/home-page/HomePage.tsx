@@ -5,17 +5,15 @@ import { DocumentPlusIcon, DocumentArrowDownIcon, FolderOpenIcon } from '@heroic
 import SidePanelButton from "./components/SidePanelButton";
 import { selectRecentFiles } from "../../store/HistorySlice";
 import RecentFileButton from "./components/RecentFileButton";
+import HomePageNav from "./components/HomePageNav";
 
 const HomePage = () => {
   const recentFiles = useSelector(selectRecentFiles);
 
   return (
     <div className='flex h-screen'>
-      <div className='w-fit bg-blue-900'>
-        <h1 className='text-white text-4xl m-6 mb-10'>
-          NLP Marker
-        </h1>
-
+      <HomePageNav
+        title='NLP Marker'>
         <SidePanelButton
           text='New Exam'
           icon={<DocumentPlusIcon />}
@@ -28,7 +26,7 @@ const HomePage = () => {
           text='Open Exam'
           icon={<FolderOpenIcon />}
         />
-      </div>
+      </HomePageNav>
 
       <div className='flex-1 bg-gray-100 overflow-scroll'>
         <h1 className='text-4xl m-6 mt-10'>Recent exams</h1>
