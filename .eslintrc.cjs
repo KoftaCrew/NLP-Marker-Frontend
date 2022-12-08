@@ -3,6 +3,7 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     plugins: ['@typescript-eslint'],
     root: true,
+    ignorePatterns: ['node_modules', 'dist', 'build', 'postcss.config.js', 'tailwind.config.js'],
     rules: {
         'camelcase': 'error',
         'no-console': 'error',
@@ -19,5 +20,10 @@ module.exports = {
         'no-multi-spaces': 'error',
         'semi': ['error', 'always'],
         'semi-style': ['error', 'last'],
+        'no-unused-vars': 'error',
+        'no-alert': 'error',
+        'no-empty': 'error',
+        'no-empty-function': 'error',
+        'eol-last': ['error', 'always'],
     }
   };
