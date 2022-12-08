@@ -8,58 +8,58 @@ export interface HistoryState {
 }
 
 const initialState: HistoryState = {
-    recentFiles: [
-        {
-            name: 'test',
-            path: 'test'
-        },
-        {
-            name: 'test2',
-            path: 'test2'
-        },
-        {
-            name: 'test',
-            path: 'test'
-        },
-        {
-            name: 'test2',
-            path: 'test2'
-        },
-        {
-            name: 'test',
-            path: 'test'
-        },
-        {
-            name: 'test2',
-            path: 'test2'
-        },
-        {
-            name: 'test',
-            path: 'test'
-        },
-        {
-            name: 'test2',
-            path: 'test2'
-        },
-        {
-            name: 'test',
-            path: 'test'
-        },
-        {
-            name: 'test2',
-            path: 'test2'
-        },
-    ],
+  recentFiles: [
+    {
+      name: 'test',
+      path: 'test'
+    },
+    {
+      name: 'test2',
+      path: 'test2'
+    },
+    {
+      name: 'test',
+      path: 'test'
+    },
+    {
+      name: 'test2',
+      path: 'test2'
+    },
+    {
+      name: 'test',
+      path: 'test'
+    },
+    {
+      name: 'test2',
+      path: 'test2'
+    },
+    {
+      name: 'test',
+      path: 'test'
+    },
+    {
+      name: 'test2',
+      path: 'test2'
+    },
+    {
+      name: 'test',
+      path: 'test'
+    },
+    {
+      name: 'test2',
+      path: 'test2'
+    }
+  ]
 };
 
 export const historySlice = createSlice({
-    name: 'history',
-    initialState,
-    reducers: {
-        addRecentFile: (state, action: PayloadAction<FileMetaData>) => {
-            state.recentFiles.push(action.payload);
-        }
+  name: 'history',
+  initialState,
+  reducers: {
+    addRecentFile: (state, action: PayloadAction<FileMetaData>) => {
+      state.recentFiles.push(action.payload);
     }
+  }
 });
 
 export const { addRecentFile } = historySlice.actions;
