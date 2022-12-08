@@ -28,7 +28,7 @@ const HomePage = () => {
         />
       </HomePageNav>
 
-      <div className='flex-1 bg-gray-100 overflow-scroll'>
+      <div className='flex-1 bg-gray-100 overflow-y-auto'>
         <h1 className='text-4xl m-6 mt-10'>Recent exams</h1>
         <div className='flex flex-wrap gap-4 m-6 mt-10'>
           {recentFiles.map((file) => (
