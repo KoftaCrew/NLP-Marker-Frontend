@@ -25,4 +25,4 @@ jobs:
         run: npm i --ignore-scripts
 
       - name: Run ESLint
-        run: npx eslint .
+        run: npx eslint . --max-warnings=0
