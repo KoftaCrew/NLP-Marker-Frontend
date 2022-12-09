@@ -1,14 +1,22 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { DocumentPlusIcon, DocumentArrowDownIcon, FolderOpenIcon } from '@heroicons/react/24/solid';
 
 import SidePanelButton from "./components/SidePanelButton";
 import { selectRecentFiles } from "../../store/HistorySlice";
 import RecentFileButton from "./components/RecentFileButton";
 import HomePageNav from "./components/HomePageNav";
+import { openFile } from "../../store/OpenFileSlice";
 
 const HomePage = () => {
   const recentFiles = useSelector(selectRecentFiles);
+  const dispatch = useDispatch();
+
+  const newFile = useCallback(() => {
+    dispatch(openFile({
+      name: 'Untitled'
+    }));
+  }, [dispatch]);
 
   return (
     <div className='flex h-screen'>
@@ -17,6 +25,7 @@ const HomePage = () => {
         <SidePanelButton
           text='New Exam'
           icon={<DocumentPlusIcon />}
+          onClick={newFile}
         />
         <SidePanelButton
           text='Import Exam'

@@ -1,6 +1,6 @@
 interface FileMetaData {
     name: string;
-    path: string;
+    path?: string;
 }
 
 export default FileMetaData;
