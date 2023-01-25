@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import historyReducer from "./HistorySlice";
+import openFileReducer from "./OpenFileSlice";
 
 export const store = configureStore({
   reducer: {
-    history: historyReducer
+    history: historyReducer,
+    openFile: openFileReducer
   }
 });
 
