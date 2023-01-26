@@ -2,7 +2,11 @@ import { useSelector } from "react-redux";
 
 import { selectOpenFile } from "../../../store/OpenFileSlice";
 
-const PaperPage = () => {
+interface PaperPageProps {
+  children: React.ReactNode[];
+}
+
+const PaperPage = ( {children}: PaperPageProps ) => {
   const openFileSelector = useSelector(selectOpenFile);
 
   return (
@@ -12,7 +16,7 @@ const PaperPage = () => {
         width: `${openFileSelector?.data.width}pt`,
         aspectRatio: openFileSelector?.data.aspectRatio
       }}>
-
+      {children}
     </div>
   );
 };

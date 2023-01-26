@@ -21,7 +21,7 @@ module.exports = {
     'no-multi-spaces': 'warn',
     'semi': ['error', 'always'],
     'semi-style': ['warn', 'last'],
-    'no-unused-vars': 'warn',
+    '@typescript-eslint/no-unused-vars': 'warn',
     'no-alert': 'warn',
     'no-empty': 'warn',
     'no-empty-function': 'warn',
