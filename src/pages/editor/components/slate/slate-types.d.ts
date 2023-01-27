@@ -4,6 +4,7 @@ import {
 } from 'slate';
 import { ReactEditor } from 'slate-react';
 import { HistoryEditor } from 'slate-history';
+import { PagedEditor } from './withPages';
 
 export type BlockQuoteElement = {
   type: 'block-quote'
@@ -68,7 +69,20 @@ export type TitleElement = { type: 'title'; children: Descendant[] }
 
 export type VideoElement = { type: 'video'; url: string; children: EmptyText[] }
 
-export type PageElement = { type: 'page'; children: Descendant[] }
+export type PageElement = {
+  type: 'page';
+  children: Descendant[];
+  width: number;
+  height: number;
+  padding: PaddingProps;
+}
+
+export interface PaddingProps {
+  left?: number;
+  right?: number;
+  top?: number;
+  bottom?: number;
+}
 
 type CustomElement =
   | BlockQuoteElement
@@ -100,7 +114,7 @@ export type EmptyText = {
   text: string
 }
 
-export type CustomEditor = BaseEditor & ReactEditor & HistoryEditor
+export type CustomEditor = BaseEditor & ReactEditor & HistoryEditor & PagedEditor
 
 declare module 'slate' {
   interface CustomTypes {
@@ -108,4 +122,17 @@ declare module 'slate' {
     Element: CustomElement
     Text: CustomText | EmptyText
   }
+}
+
+declare global {
+  interface Window {
+    doc: Descendant[]
+  }
+}
+
+interface ElementAttributes {
+  'data-slate-node': 'element';
+  'data-slate-inline'?: true;
+  'data-slate-void'?: true;
+  dir?: 'rtl';
 }

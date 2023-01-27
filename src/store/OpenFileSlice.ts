@@ -4,6 +4,7 @@ import FileMetaData from '../data/FileMetaData';
 import { RootState } from './Store';
 import { Nullable } from '../utils/Types';
 import { ExamData } from '../data/ExamData';
+import { POINTS_TO_INCH } from '../constants';
 
 export interface OpenFileState {
   fileMetaData: FileMetaData;
@@ -20,7 +21,7 @@ export const openFileSlice = createSlice({
       return {
         fileMetaData: action.payload,
         data: {
-          width: 8.3 * 72,
+          width: 8.3 * POINTS_TO_INCH,
           aspectRatio: 8.3 / 11.7,
           questions: [{question: 'test', modelAnswer: '', answers: []}]
         }
