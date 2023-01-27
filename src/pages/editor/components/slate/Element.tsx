@@ -12,7 +12,7 @@ const Element = ({ attributes, children, element }: RenderElementProps) => {
       </PaperPage>
     );
   default:
-    return <p {...attributes}>{children}</p>;
+    return <p {...attributes} ref={attributes.ref}>{children}</p>;
   }
 };
 
