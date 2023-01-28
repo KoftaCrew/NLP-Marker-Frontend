@@ -1,5 +1,6 @@
 {
   "name": "nlp-marker",
+  "homepage": "NLP-Marker-Frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -27,7 +28,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy" : "npm run build",
+    "deploy" : "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -52,6 +55,7 @@
     "@typescript-eslint/parser": "^5.46.0",
     "autoprefixer": "^10.4.13",
     "eslint": "^8.29.0",
+    "gh-pages": "^5.0.0",
     "postcss": "^8.4.19",
     "tailwindcss": "^3.2.4",
     "typescript": "^4.9.4"
