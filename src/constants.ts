@@ -1,1 +1,1 @@
-export const POINTS_TO_INCH = 75;
+export const POINTS_TO_INCH = 72;
