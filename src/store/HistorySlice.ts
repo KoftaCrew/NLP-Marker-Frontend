@@ -11,7 +11,7 @@ const initialState: HistoryState = {
   recentFiles: [
     {
       name: 'test',
-      path: 'test'
+      path: 'test1'
     },
     {
       name: 'test2',
@@ -19,35 +19,35 @@ const initialState: HistoryState = {
     },
     {
       name: 'test',
-      path: 'test'
+      path: 'test3'
     },
     {
       name: 'test2',
-      path: 'test2'
+      path: 'test4'
     },
     {
       name: 'test',
-      path: 'test'
+      path: 'test5'
     },
     {
       name: 'test2',
-      path: 'test2'
+      path: 'test6'
     },
     {
       name: 'test',
-      path: 'test'
+      path: 'test7'
     },
     {
       name: 'test2',
-      path: 'test2'
+      path: 'test8'
     },
     {
       name: 'test',
-      path: 'test'
+      path: 'test9'
     },
     {
       name: 'test2',
-      path: 'test2'
+      path: 'test10'
     }
   ]
 };
