@@ -77,6 +77,44 @@ export type PageElement = {
   padding: PaddingProps;
 }
 
+export type QuestionElement =
+  | MultipleChoiceQuestionElement
+  | MathQuestionElement
+  | CompareQuestionElement
+  | TrueFalseQuestionElement
+  | EssayQuestionElement
+  | AnswerAreaElement
+
+export type MultipleChoiceQuestionElement = {
+  type: 'mcq';
+  children: Descendant[];
+}
+
+export type MathQuestionElement = {
+  type: 'math';
+  children: Descendant[];
+}
+
+export type CompareQuestionElement = {
+  type: 'compare';
+  children: Descendant[];
+}
+
+export type TrueFalseQuestionElement = {
+  type: 'truefalse';
+  children: Descendant[];
+}
+
+export type EssayQuestionElement = {
+  type: 'essay';
+  children: Descendant[];
+}
+
+export type AnswerAreaElement = {
+  type: 'answer';
+  children: Descendant[];
+}
+
 export interface PaddingProps {
   left?: number;
   right?: number;
@@ -102,6 +140,7 @@ type CustomElement =
   | TitleElement
   | VideoElement
   | PageElement
+  | QuestionElement
 
 export type CustomText = {
   bold?: boolean
