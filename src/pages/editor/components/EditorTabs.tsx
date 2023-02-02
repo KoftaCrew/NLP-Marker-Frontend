@@ -1,4 +1,6 @@
 import { Tab } from '@headlessui/react';
+import { Editor, Transforms } from 'slate';
+import { EditorComponentProps } from './slate/slate-types';
 
 interface ChildrenProps {
   children: React.ReactNode;
@@ -18,7 +20,7 @@ const EditorTabPanel = ({ children }: ChildrenProps) => {
   </Tab.Panel>);
 };
 
-const EditorTabs = () => {
+const EditorTabs = ({ editor }: EditorComponentProps) => {
   return (
     <Tab.Group>
       <Tab.List className='bg-gray-300 px-3 space-x-3 shadow-md'>
@@ -29,7 +31,17 @@ const EditorTabs = () => {
       </Tab.List>
       <Tab.Panels className='bg-gray-300 pb-2 px-3 drop-shadow-md'>
         <EditorTabPanel>
-          Content 1
+          <button
+            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+            onClick={() => {
+              Transforms.setNodes(
+                editor,
+                {type: 'block-quote'},
+                {match: (n) => Editor.isBlock(editor, n)}
+              );
+            }
+            }
+          > Convert to blockquote </button>
         </EditorTabPanel>
         <EditorTabPanel>
           Content 2
