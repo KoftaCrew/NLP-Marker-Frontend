@@ -56,6 +56,8 @@ export type InPageElement =
     | TableCellElement
     | TableRowElement
     | QuestionElement
+    | QuestionHeadingElement
+    | AnswerAreaElement
 
 /**
  * Any descendant that can be placed on a page.
