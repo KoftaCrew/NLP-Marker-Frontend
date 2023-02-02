@@ -153,3 +153,7 @@ export type ElementAttributes = {
   'data-slate-void'?: true;
   dir?: 'rtl';
 }
+
+export interface EditorComponentProps {
+  editor: Editor;
+}
