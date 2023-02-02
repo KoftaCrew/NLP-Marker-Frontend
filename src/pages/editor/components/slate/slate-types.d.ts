@@ -121,8 +121,7 @@ export interface TableRowElement extends IInPageElement {
 
 export interface QuestionElement extends IInPageElement{
     type: 'question';
-    question: QuestionHeadingElement;
-    answer: AnswerAreaElement;
+    children: (QuestionHeadingElement | AnswerAreaElement)[];
 }
 export type QuestionHeadingElement =
   | MultipleChoiceQuestionElement
@@ -131,35 +130,30 @@ export type QuestionHeadingElement =
   | TrueFalseQuestionElement
   | EssayQuestionElement
 
-export interface MultipleChoiceQuestionElement extends QuestionElement{
+export interface MultipleChoiceQuestionElement extends IInPageElement{
   type: 'mcq';
-  children: InPageDescendant[];
   answer: InPageDescendant[];
 }
 
-export interface MathQuestionElement extends QuestionElement {
+export interface MathQuestionElement extends IInPageElement {
   type: 'math';
-  children: InPageDescendant[];
 }
 
-export interface CompareQuestionElement extends QuestionElement {
+export interface CompareQuestionElement extends IInPageElement {
   type: 'compare';
-  children: InPageDescendant[];
 }
 
-export interface TrueFalseQuestionElement extends QuestionElement {
+export interface TrueFalseQuestionElement extends IInPageElement {
   type: 'true-false';
-  children: InPageDescendant[];
 }
 
-export interface EssayQuestionElement extends QuestionElement {
+export interface EssayQuestionElement extends IInPageElement {
   type: 'essay';
-  children: InPageDescendant[];
 }
 
-export type AnswerAreaElement = {
+export interface AnswerAreaElement {
   type: 'answer';
-  children: InPageDescendant[];
+  children: EmptyText[];
   height: number;
 }
 
