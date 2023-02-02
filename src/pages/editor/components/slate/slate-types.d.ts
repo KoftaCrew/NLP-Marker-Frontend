@@ -55,6 +55,7 @@ export type InPageElement =
     | TableElement
     | TableCellElement
     | TableRowElement
+    | QuestionElement
 
 /**
  * Any descendant that can be placed on a page.
@@ -118,42 +119,48 @@ export interface TableRowElement extends IInPageElement {
 }
 
 
-export type QuestionElement =
+export interface QuestionElement extends IInPageElement{
+    type: 'question';
+    question: QuestionHeadingElement;
+    answer: AnswerAreaElement;
+}
+export type QuestionHeadingElement =
   | MultipleChoiceQuestionElement
   | MathQuestionElement
   | CompareQuestionElement
   | TrueFalseQuestionElement
   | EssayQuestionElement
-  | AnswerAreaElement
 
-export type MultipleChoiceQuestionElement = {
+export interface MultipleChoiceQuestionElement extends QuestionElement{
   type: 'mcq';
-  children: Descendant[];
+  children: InPageDescendant[];
+  answer: InPageDescendant[];
 }
 
-export type MathQuestionElement = {
+export interface MathQuestionElement extends QuestionElement {
   type: 'math';
-  children: Descendant[];
+  children: InPageDescendant[];
 }
 
-export type CompareQuestionElement = {
+export interface CompareQuestionElement extends QuestionElement {
   type: 'compare';
-  children: Descendant[];
+  children: InPageDescendant[];
 }
 
-export type TrueFalseQuestionElement = {
-  type: 'truefalse';
-  children: Descendant[];
+export interface TrueFalseQuestionElement extends QuestionElement {
+  type: 'true-false';
+  children: InPageDescendant[];
 }
 
-export type EssayQuestionElement = {
+export interface EssayQuestionElement extends QuestionElement {
   type: 'essay';
-  children: Descendant[];
+  children: InPageDescendant[];
 }
 
 export type AnswerAreaElement = {
   type: 'answer';
-  children: Descendant[];
+  children: InPageDescendant[];
+  height: number;
 }
 
 export interface Text {
