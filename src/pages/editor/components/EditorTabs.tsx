@@ -1,5 +1,5 @@
 import { Tab } from '@headlessui/react';
-import { Editor, Transforms } from 'slate';
+
 import {EditorComponentProps, InPageElement} from './slate/slate-types';
 import EditorTabButton from "./EditorTabButton/EditorTabButton";
 

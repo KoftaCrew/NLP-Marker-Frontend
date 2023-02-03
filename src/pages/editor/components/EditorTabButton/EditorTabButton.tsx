@@ -1,5 +1,5 @@
 import {Editor, Transforms} from "slate";
-import {BlockQuoteElement, BulletedListElement, InPageElement} from "../slate/slate-types";
+import {InPageElement} from "../slate/slate-types";
 
 interface EditorTabButtonProps {
   type: InPageElement["type"]
