@@ -1,6 +1,7 @@
 import { Tab } from '@headlessui/react';
 import { Editor, Transforms } from 'slate';
-import { EditorComponentProps } from './slate/slate-types';
+import {EditorComponentProps, InPageElement} from './slate/slate-types';
+import EditorTabButton from "./EditorTabButton/EditorTabButton";
 
 interface ChildrenProps {
   children: React.ReactNode;
@@ -31,20 +32,17 @@ const EditorTabs = ({ editor }: EditorComponentProps) => {
       </Tab.List>
       <Tab.Panels className='bg-gray-300 pb-2 px-3 drop-shadow-md'>
         <EditorTabPanel>
-          <button
-            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-            onClick={() => {
-              Transforms.setNodes(
-                editor,
-                {type: 'block-quote'},
-                {match: (n) => Editor.isBlock(editor, n)}
-              );
-            }
-            }
-          > Convert to blockquote </button>
+          <EditorTabButton type={'block-quote'} editor={editor}>Convert to blockquote</EditorTabButton>
+
         </EditorTabPanel>
         <EditorTabPanel>
-          Content 2
+          {
+            (["mcq", "true-false", "compare", "math", "essay"] as InPageElement["type"][]).map((type) => {
+              return <EditorTabButton type={type} editor={editor}
+              >
+                {type[0].toUpperCase()}{type.substr(1)}</EditorTabButton>;
+            })
+          }
         </EditorTabPanel>
         <EditorTabPanel>
           Content 3
