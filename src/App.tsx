@@ -1,10 +1,11 @@
 import Home from './views/Home';
+import StudentExam from './views/StudentExam';
 
 function App() {
 
   return (
     <>
-      <Home></Home>
+      <StudentExam/>
     </>
   );
 }
