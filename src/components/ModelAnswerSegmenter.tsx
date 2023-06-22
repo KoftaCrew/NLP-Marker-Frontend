@@ -114,6 +114,8 @@ const HIGHLIGHT_COLORS = [
 
 /* eslint-disable max-len */
 const PRELIMINARY_SEGMENTATION_MESSAGE = 'This model answer is not yet segmented. We will suggest a segmentation for you.';
+const RESEGMENTATION_MESSAGE = 'This model answer has been segmented. You can edit the segmentation by clicking on segments.';
+const NEED_NEW_SEGMENTATION = 'You have edited the model answer. If you want us to suggest a new segmentation, click "Smart segmentation" below.';
 /* eslint-enable max-len */
 
 const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
@@ -126,23 +128,40 @@ const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
 
   const [segments, setSegments] = useState<ModelAnswerSegment[]>([]);
   const [loading, setLoading] = useState(false);
+  const [needSegmentation, setNeedSegmentation] = useState(false);
 
   const helperText = useMemo(() => {
     if (mode === 'edit' && segments.length === 0) {
       return PRELIMINARY_SEGMENTATION_MESSAGE;
     }
+    if (mode === 'grade' && segments.length > 0 && !needSegmentation) {
+      return RESEGMENTATION_MESSAGE;
+    }
+    if (mode === 'grade' && segments.length > 0 && needSegmentation) {
+      return NEED_NEW_SEGMENTATION;
+    }
     return '';
-  }, [mode]);
+  }, [mode, segments, needSegmentation]);
 
-  const handleSwitchMode = async () => {
+  const getNewSegments = async () => {
+    setLoading(true);
+    const newSegments = await segmentModelAnswer(modelAnswer);
+    setSegments(newSegments);
+    setLoading(false);
+    setNeedSegmentation(false);
+  };
+
+  const handleSwitchMode = () => {
     setMode(mode === 'edit' ? 'grade' : 'edit');
 
     if (mode === 'edit' && segments.length === 0) {
-      setLoading(true);
-      const newSegments = await segmentModelAnswer(modelAnswer);
-      setSegments(newSegments);
-      setLoading(false);
+      getNewSegments();
     }
+  };
+
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setModelAnswer(e.target.value);
+    setNeedSegmentation(true);
   };
 
   return (<div className='w-full flex flex-col gap-5'>
@@ -154,7 +173,7 @@ const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
       value={modelAnswer}
       rows={5}
       disabled={loading}
-      onChange={(e) => setModelAnswer(e.target.value)}
+      onChange={handleOnChange}
       InputProps={{
         inputComponent: mode === 'grade' && !loading ? CustomInput : 'textarea'
       }}
@@ -164,7 +183,7 @@ const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
       }}
       helperText={helperText}
     />
-    <div className='flex flex-col items-end'>
+    <div className='flex flex-col items-end gap-2'>
       <LoadingButton
         loading={loading}
         variant='contained'
@@ -172,6 +191,15 @@ const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
         onClick={ handleSwitchMode }
       >
         Switch to { mode === 'edit' ? 'grade' : 'edit' } mode
+      </LoadingButton>
+      <LoadingButton
+        loading={loading}
+        variant='contained'
+        className='flex-grow-0'
+        onClick={ getNewSegments }
+        disabled={mode === 'edit'}
+      >
+        Smart segmentation
       </LoadingButton>
     </div>
   </div> );
