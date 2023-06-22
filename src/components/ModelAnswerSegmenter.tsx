@@ -61,6 +61,10 @@ const CustomInput = ({value, segments, setSegments}: CustomInputProps) => {
       });
       lastEnd = segment.end;
     }
+    text.push({
+      text: value.substring(lastEnd),
+      color: 'white'
+    });
 
     return text.map((segment, i) => (
       <span
@@ -141,7 +145,7 @@ const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
     }
   };
 
-  return (<div className='w-full flex flex-col'>
+  return (<div className='w-full flex flex-col gap-5'>
     <TextField
       variant='outlined'
       label='Model answer'
@@ -151,7 +155,6 @@ const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
       rows={5}
       disabled={loading}
       onChange={(e) => setModelAnswer(e.target.value)}
-      margin='dense'
       InputProps={{
         inputComponent: mode === 'grade' && !loading ? CustomInput : 'textarea'
       }}
