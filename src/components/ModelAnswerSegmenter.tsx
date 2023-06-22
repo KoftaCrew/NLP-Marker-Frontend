@@ -27,8 +27,14 @@ interface CustomInputProps extends InputBaseComponentProps {
   setSegments?: (segments: ModelAnswerSegment[]) => void;
 }
 
-const CustomInput = ({value, segments, setSegments}: CustomInputProps) => {
-  const validateSegments = (segments: ModelAnswerSegment[]) : boolean => {
+const CustomInput = ({ value, rows, segments, setSegments }: CustomInputProps) => {
+  const [dragging, setDragging] = useState(false);
+  const [draggingIndex, setDraggingIndex] = useState(-1);
+
+  const [hovering, setHovering] =
+   useState<{ segmentId: number, place: "start" | "end" }>({ segmentId: -1, place: "start" });
+
+  const validateSegments = (segments: ModelAnswerSegment[]): boolean => {
     const sortedSegments = [...segments].sort((a, b) => a.start - b.start);
     for (let i = 0; i < sortedSegments.length - 1; i++) {
       if (sortedSegments[i].end > sortedSegments[i + 1].start) {
@@ -46,41 +52,82 @@ const CustomInput = ({value, segments, setSegments}: CustomInputProps) => {
       return <span className='text-red-500'>Invalid segmentation</span>;
     }
     const sortedSegments = [...segments].sort((a, b) => a.start - b.start);
-    const text: {text: string, color: string}[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const text: { segmentId: number, text: string, color: any | null }[] = [];
     let lastEnd = 0;
 
     for (let i = 0; i < sortedSegments.length; i++) {
       const segment = sortedSegments[i];
       text.push({
         text: value.substring(lastEnd, segment.start),
-        color: 'white'
+        color: null,
+        segmentId: i
       });
       text.push({
         text: value.substring(segment.start, segment.end),
-        color: HIGHLIGHT_COLORS[i % HIGHLIGHT_COLORS.length]
+        color: HIGHLIGHT_COLORS[i % HIGHLIGHT_COLORS.length],
+        segmentId: i
       });
       lastEnd = segment.end;
     }
     text.push({
       text: value.substring(lastEnd),
-      color: 'white'
+      color: null,
+      segmentId: sortedSegments.length
     });
 
-    return text.map((segment, i) => (
-      <span
-        key={i}
-        style={{backgroundColor: segment.color}}
-        className='inline-block'
-      >
-        {segment.text}
-      </span>
+    const handleHover = (segmentId: number, place: "start" | "end") => () => {
+      setHovering({ segmentId, place });
+    };
+
+    const handleHoverEnd = () => {
+      setHovering({ segmentId: -1, place: "start" });
+    };
+
+    return text.map((segment, i) => (segment.text === '' ? null :
+      <>
+        <span
+          className='inline-block w-1 cursor-col-resize hover:border-r-4'
+          style={{
+            backgroundColor: segment.color === null ? 'transparent' : segment.color[200],
+            borderColor: segment.color === null ? 'transparent' : segment.color[500]
+          }}
+          onMouseOver={handleHover(segment.segmentId, "start")}
+          onMouseOut={handleHoverEnd}
+        >
+          &nbsp;
+        </span>
+        {
+          segment.text.split('').map((char, j) => (
+            <span
+              key={i * 1000 + j}
+              style={{ backgroundColor: segment.color[100] }}
+              className='inline-block'
+            >
+              {char}
+            </span>
+          )
+          )
+        }
+        <span
+          className='inline-block w-1 cursor-col-resize hover:border-l-4'
+          style={{
+            backgroundColor: segment.color === null ? 'transparent' : segment.color[200],
+            borderColor: segment.color === null ? 'transparent' : segment.color[500]
+          }}
+          onMouseOver={handleHover(segment.segmentId, "end")}
+          onMouseOut={handleHoverEnd}
+        >
+          &nbsp;
+        </span>
+      </>
     ));
   }, [value, segments]);
 
   return (
     <div
-      style={{height:'7.5em'}}
-      className='whitespace-pre-wrap overflow-y-auto w-full'
+      style={{ height: `${rows * 1.5}em` }}
+      className='whitespace-pre-wrap overflow-y-auto w-full select-none'
     >
       {segmentedText}
     </div>
@@ -91,25 +138,26 @@ interface ModelAnswerSegmenterProps {
   modelAnswer?: string;
   setModelAnswer?: (modelAnswer: string) => void;
   setSegments?: (segments: ModelAnswerSegment[]) => void;
+  rows?: number;
 }
 
 const HIGHLIGHT_COLORS = [
-  amber[100],
-  blue[100],
-  cyan[100],
-  deepOrange[100],
-  deepPurple[100],
-  green[100],
-  indigo[100],
-  lightBlue[100],
-  lightGreen[100],
-  lime[100],
-  orange[100],
-  pink[100],
-  purple[100],
-  red[100],
-  teal[100],
-  yellow[100]
+  amber,
+  blue,
+  cyan,
+  deepOrange,
+  deepPurple,
+  green,
+  indigo,
+  lightBlue,
+  lightGreen,
+  lime,
+  orange,
+  pink,
+  purple,
+  red,
+  teal,
+  yellow
 ];
 
 /* eslint-disable max-len */
@@ -122,7 +170,7 @@ const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
   const [mode, setMode] = useState<'grade' | 'edit'>('edit');
   const [modelAnswer, setModelAnswer] =
     props.modelAnswer === undefined
-  || props.setModelAnswer === undefined
+      || props.setModelAnswer === undefined
       ? useState<string>(props.modelAnswer ?? '')
       : [props.modelAnswer, props.setModelAnswer];
 
@@ -142,6 +190,7 @@ const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
     }
     return '';
   }, [mode, segments, needSegmentation]);
+  const rows = props.rows ?? 10;
 
   const getNewSegments = async () => {
     setLoading(true);
@@ -171,7 +220,7 @@ const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
       fullWidth
       multiline
       value={modelAnswer}
-      rows={5}
+      rows={rows}
       disabled={loading}
       onChange={handleOnChange}
       InputProps={{
@@ -188,21 +237,21 @@ const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
         loading={loading}
         variant='contained'
         className='flex-grow-0'
-        onClick={ handleSwitchMode }
+        onClick={handleSwitchMode}
       >
-        Switch to { mode === 'edit' ? 'grade' : 'edit' } mode
+        Switch to {mode === 'edit' ? 'grade' : 'edit'} mode
       </LoadingButton>
       <LoadingButton
         loading={loading}
         variant='contained'
         className='flex-grow-0'
-        onClick={ getNewSegments }
+        onClick={getNewSegments}
         disabled={mode === 'edit'}
       >
         Smart segmentation
       </LoadingButton>
     </div>
-  </div> );
+  </div>);
 };
 
 export default ModelAnswerSegmenter;
