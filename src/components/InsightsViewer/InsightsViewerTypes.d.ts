@@ -1,6 +1,8 @@
 export type InsightsViewerProps = {
-  studTokens: string[],
-  modelTokens: string[],
+  studTokens: ListStudentTokens,
+  modelTokens: ListModelTokens,
+  adjStud: number[][],
+  adjModel: number[][],
 }
 
 export type ListStudentTokens =string[]
