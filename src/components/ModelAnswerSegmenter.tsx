@@ -200,9 +200,9 @@ const CustomInput = ({ value, rows, segments: segmentsState, setSegments }: Cust
         key={i}
         title={segment.segmentId === -1 || draggingIndex.segmentId !== -1 ? null :
           <div className='text-lg'>
-            <span className='font-bold'>Grade: </span>
+            <span className='font-bold'>Marks: </span>
             <span>{segment.grade ?? 'N/A'}</span>
-            <p className='text-sm'>Double click to change grade</p>
+            <p className='text-sm'>Double click to change assigned marks</p>
           </div>
         }
         followCursor
@@ -277,10 +277,10 @@ const CustomInput = ({ value, rows, segments: segmentsState, setSegments }: Cust
         open={gradeDialogOpen !== -1 && dialogOpen}
         onClose={handleGradeDialogClose(-1)}
       >
-        <DialogTitle>Set Grade</DialogTitle>
+        <DialogTitle>Set Marks</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            <p>Set the grade for this segment.</p>
+            <p>Set assigned marks for this segment.</p>
             {segments && gradeDialogOpen !== -1 &&
               <p className='font-bold'>
                 {value.substring(segments[gradeDialogOpen].start, segments[gradeDialogOpen].end)}
@@ -291,7 +291,7 @@ const CustomInput = ({ value, rows, segments: segmentsState, setSegments }: Cust
             autoFocus
             margin='dense'
             id='grade'
-            label='Grade'
+            label='Marks'
             type='number'
             fullWidth
             value={dialogGrade}
@@ -307,7 +307,7 @@ const CustomInput = ({ value, rows, segments: segmentsState, setSegments }: Cust
           <Button
             onClick={handleGradeDialogClose(parseInt(dialogGrade))}
           >
-            Set Grade
+            Set Marks
           </Button>
         </DialogActions>
       </Dialog>
@@ -343,7 +343,7 @@ const HIGHLIGHT_COLORS = [
 
 /* eslint-disable max-len */
 const PRELIMINARY_SEGMENTATION_MESSAGE = 'This model answer is not yet segmented. We will suggest a segmentation for you.';
-const RESEGMENTATION_MESSAGE = 'This model answer has been segmented. You can edit the segmentation by dragging on segments, or add Grades. Note that ungraded segments will look lighter.';
+const RESEGMENTATION_MESSAGE = 'This model answer has been segmented. You can edit the segmentation by dragging on segments, or add marks. Note that ungraded segments will look lighter.';
 const NOT_ALL_TEXT_SEGMENTED = 'Not all text is segmented. You can edit the segmentation by dragging on segments, or double click to add new segments.';
 const NEED_NEW_SEGMENTATION = 'You have edited the model answer. If you want us to suggest a new segmentation, click "Smart segmentation" below.';
 /* eslint-enable max-len */
