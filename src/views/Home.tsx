@@ -4,7 +4,7 @@ const Home = () => {
   return(
     <>
       <div> this is a simple react page</div>
-      <InsightsViewer></InsightsViewer>
+      <InsightsViewer studTokens={["first", "text"]} modelTokens={["second", "text"]}></InsightsViewer>
     </>
   );
 };

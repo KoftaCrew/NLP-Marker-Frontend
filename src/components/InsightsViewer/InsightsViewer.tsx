@@ -1,28 +1,25 @@
 import { useState } from "react";
-import { ListModelTokens, ListStudentTokens } from "./InsightsViewerTypes";
+import { InsightsViewerProps } from "./InsightsViewerTypes";
 
 
-const InsightsViewer = () => {
-  const x = ["first text", "second text"];
+const InsightsViewer = (props: InsightsViewerProps) => {
+  const space = " ";
 
-
-  const [isHover, setIsHover] = useState<boolean[]>([false, false]);
-  // const [studTokens] = useState<boolean[]>([]);
-  // const [studModel] = useState<boolean[]>([]);
-  // const [studTokens] = useState<boolean[]>([]);
+  //isHover state used to render background color of tokens on mouse hover
+  const [isHover, setIsHover] = useState<boolean[]>([]);
 
   // const adj : ListStudentTokens = ["first text", "second text"];
-  let adj = {"first": ["second"]};
-  let studTokens = ["first","text"];
-  let modelTokens = ["second","text"];
+  // let adj = { "first": ["second"] }; //TODO to be used for mapping student tokens to model tokens
+
+
   const handleMouseEnter = (index: number) => {
-    let newIsHover = [...isHover];
+    const newIsHover = [...isHover];
     newIsHover[index] = true;
     setIsHover(newIsHover);
   };
 
   const handleMouseLeave = (index: number) => {
-    let newIsHover = [...isHover];
+    const newIsHover = [...isHover];
     newIsHover[index] = false;
     setIsHover(newIsHover);
   };
@@ -30,17 +27,31 @@ const InsightsViewer = () => {
   return (
     <>
       <div>InsightsViewer</div>
-      <div>
+      <span className='m-2'>
         {
-          x.map((item, index) => <span className='m-2'
+          props.studTokens.map((item, index) => <span className=''
             style={{
               backgroundColor: isHover[index] ? "red" : "white"
             }}
             onMouseEnter={() => handleMouseEnter(index)}
             onMouseLeave={() => handleMouseLeave(index)} >
             {item}
+            <span style={{backgroundColor: "white"}}>{space}</span>
           </span>)
-        }</div>
+        }</span>
+      <span className='m-2'>
+        {
+          props.modelTokens.map((item, index) => <span className=''
+            style={{
+              backgroundColor: isHover[index] ? "red" : "white"
+            }}
+            onMouseEnter={() => handleMouseEnter(index)}
+            onMouseLeave={() => handleMouseLeave(index)} >
+            {item}
+            <span style={{backgroundColor: "white"}}>{space}</span>
+          </span>)
+        }
+      </span>
     </>
   );
 };
