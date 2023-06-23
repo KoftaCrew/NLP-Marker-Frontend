@@ -12,9 +12,9 @@ const InsightsViewer = (props: InsightsViewerProps) => {
 
   const handleMouseEnter = (index: number, tokenType: number) => {
     const newHighlightedStudent: boolean[] =
-     Array(props.modelTokens.length).fill(false);
+      Array(props.modelTokens.length).fill(false);
     const newHighlightedModel: boolean[] =
-     Array(props.modelTokens.length).fill(false);
+      Array(props.modelTokens.length).fill(false);
 
     if (tokenType == 0) {
       newHighlightedStudent[index] = true;
@@ -42,32 +42,38 @@ const InsightsViewer = (props: InsightsViewerProps) => {
 
   return (
     <>
-      <div>InsightsViewer</div>
-      <span className='m-2'>
-        {
-          props.studTokens.map((item, index) => <span className=''
-            style={{
-              backgroundColor: isHighlightedStudent[index] ? "red" : "white"
-            }}
-            onMouseEnter={() => handleMouseEnter(index, 0)}
-            onMouseLeave={() => handleMouseLeave()} >
-            {item}
-            <span style={{ backgroundColor: "white" }}>{space}</span>
-          </span>)
-        }</span>
-      <span className='m-2'>
-        {
-          props.modelTokens.map((item, index) => <span className=''
-            style={{
-              backgroundColor: isHighlightedModel[index] ? "red" : "white"
-            }}
-            onMouseEnter={() => handleMouseEnter(index, 1)}
-            onMouseLeave={() => handleMouseLeave()} >
-            {item}
-            <span style={{ backgroundColor: "white" }}>{space}</span>
-          </span>)
-        }
-      </span>
+      <div className='bg-gray-400 w-2/3'>
+        <div className='text-center '>InsightsViewer</div>
+        <div className='flex justify-evenly'>
+          <span className='m-2 p-2 bg-white rounded border-solid border-2 border-black w-2/5 text-center'>
+            {
+              props.studTokens.map((item, index) => <span className=''
+                style={{
+                  backgroundColor: isHighlightedStudent[index] ? "#b1dae7" : "white"
+                }}
+                onMouseEnter={() => handleMouseEnter(index, 0)}
+                onMouseLeave={() => handleMouseLeave()}>
+                {item}
+                <span style={{ backgroundColor: "white" }}>{space}</span>
+              </span>)
+            }
+          </span>
+
+          <span className='m-2 p-2 bg-white rounded border-solid border-2 border-black w-2/5 text-center'>
+            {
+              props.modelTokens.map((item, index) => <span className=''
+                style={{
+                  backgroundColor: isHighlightedModel[index] ? "#b1dae7" : "white"
+                }}
+                onMouseEnter={() => handleMouseEnter(index, 1)}
+                onMouseLeave={() => handleMouseLeave()}>
+                {item}
+                <span style={{ backgroundColor: "white" }}>{space}</span>
+              </span>)
+            }
+          </span>
+        </div>
+      </div>
     </>
   );
 };
