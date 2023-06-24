@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import InsightsViewer from "../components/InsightsViewer/InsightsViewer";
 import { StudentAnswersProps } from "../entities/StudentAnswersTypes";
 
 
