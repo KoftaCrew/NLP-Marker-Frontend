@@ -92,8 +92,12 @@ const InsightsViewer = (props: InsightsViewerProps) => {
   return (
     <>
       <CustomModal key='first' open={openStud} handleClose={handleClose} title={modalTitle} content={modalContent} />
-      <div className='bg-gray-400 w-2/3'>
+      <div className='bg-gray-300 w-full'>
         <div className='text-center '>InsightsViewer</div>
+        <div className='flex'>
+          <span className='w-1/2'>Student Answer</span>
+          <span className='w-1/2'>Model Answer</span>
+        </div>
         <div className='flex justify-evenly'>
           <span className='m-2 p-2 bg-white rounded border-solid border-2 border-black w-2/5 text-center'>
             {
@@ -110,7 +114,7 @@ const InsightsViewer = (props: InsightsViewerProps) => {
                 }}
                 onMouseLeave={() => handleMouseLeave()}>
 
-                {item}
+                <span>{item}</span>
                 <span style={{ backgroundColor: "white" }}>{space}</span>
               </span>)
             }
