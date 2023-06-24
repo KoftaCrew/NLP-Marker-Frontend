@@ -8,7 +8,6 @@ const defaultBackgroundColor = "#b1dae7";
 const adjModelParser = (adj: number[][]) => {
   const adjModel: number[][] = [[]];
   for (let i = 0; i < adj.length; i++) {
-    let idx = 0;
     for (let j = 0; j < adj[i].length; j++) {
       adjModel[adj[i][j]].push(i);
     }
