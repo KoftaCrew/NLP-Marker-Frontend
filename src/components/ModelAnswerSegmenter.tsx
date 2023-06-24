@@ -12,7 +12,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ModelAnswerSegment } from "../entities/ModelAnswerTypes";
 import { segmentModelAnswer } from "../services/ModelAnswerService";
-import { LoadingButton } from "@mui/lab";
+import { LoadingButton } from "@mui/lab/";
 import {
   amber,
   blue,
