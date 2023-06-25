@@ -1,0 +1,42 @@
+name: Trigger auto deployment for frontend
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ master ]
+    paths:
+    - '"./Dockerfile"/**'
+    - '.github/workflows/frontend-AutoDeployTrigger-af344c9d-4b11-44c0-8c00-8902fd645201.yml'
+
+  # Allow mannually trigger 
+  workflow_dispatch:
+      
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.FRONTEND_AZURE_CREDENTIALS }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          appSourcePath: ${{ github.workspace }}"./Dockerfile" 
+          registryUrl: koftacrew.azurecr.io
+          registryUsername: ${{ secrets.FRONTEND_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.FRONTEND_REGISTRY_PASSWORD }}
+          containerAppName: frontend
+          resourceGroup: nlp-marking-assistant
+          imageToBuild: koftacrew.azurecr.io/frontend:${{ github.sha }}
+          dockerfilePath: Dockerfile
+
+     
+
