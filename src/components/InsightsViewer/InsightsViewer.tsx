@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import {useMemo, useState } from "react";
 import { InsightsViewerProps } from "./InsightsViewerTypes";
 import CustomModal from "../CustomModal/CustomModal";
 
@@ -93,7 +93,7 @@ const InsightsViewer = (props: InsightsViewerProps) => {
     <>
       <CustomModal key='first' open={openStud} handleClose={handleClose} title={modalTitle} content={modalContent} />
       <div className='bg-gray-300 w-full'>
-        <div className='text-center '>InsightsViewer</div>
+        <div className='text-center'>InsightsViewer</div>
         <div className='flex'>
           <span className='w-1/2'>Student Answer</span>
           <span className='w-1/2'>Model Answer</span>

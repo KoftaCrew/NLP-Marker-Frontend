@@ -1,5 +1,10 @@
-import { useMemo, useState } from "react";
-import { StudentAnswersProps } from "../entities/StudentAnswersTypes";
+import { useMemo, useState } from 'react';
+import { StudentAnswersProps } from '../entities/StudentAnswersTypes';
+import ListItemButton from '@mui/material/ListItemButton';
+import List from '@mui/material/List';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Person4Icon from '@mui/icons-material/Person4';
 
 
 const StudentsAnswers = (props: StudentAnswersProps) => {
@@ -15,7 +20,7 @@ const StudentsAnswers = (props: StudentAnswersProps) => {
   return (
 
     <div className='flex w-full h-screen '>
-      <div className='w-1/3 h-screen text-center bg-gray-300 p-2 m-2'>
+      {/* <div className='w-1/3 h-screen text-center bg-gray-300 p-2 m-2'>
         <h1>Students</h1>
         {answerMap.map((item, index) => {
           return (
@@ -26,8 +31,26 @@ const StudentsAnswers = (props: StudentAnswersProps) => {
             </div>
           );
         })}
+      </div> */}
+      <div className='w-[720px] border-r-2 h-screen text-center border-e-2 p-2 m-2 overflow-hidden'>
+        <List component='nav' aria-label='main mailbox folders'>
+          {answerMap.map((item, index) => {
+            return (
+              <ListItemButton className='border'
+                style={{ }}
+                selected={idx === index}
+                onClick={() => setIdx(index)}
+              >
+                <ListItemIcon>
+                  <Person4Icon />
+                </ListItemIcon>
+                <ListItemText primary={item.Name} />
+              </ListItemButton>
+            );
+          })}
+        </List>
       </div>
-      <div className='w-2/3 h-screen  text-center bg-gray-300 p-2 m-2'>
+      <div className='w-full h-screen  text-center bg-gray-300 p-2 m-2'>
         <h1>each students answers</h1>
         <span className=''>{showStudentAnswer?.Name}</span>
         <div className='bg-white rounded-lg  p-2 w-full' >{
