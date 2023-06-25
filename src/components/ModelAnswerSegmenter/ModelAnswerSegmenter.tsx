@@ -5,38 +5,22 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  InputBaseComponentProps,
   TextField,
   Tooltip
 } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ModelAnswerSegment } from "../entities/ModelAnswerTypes";
-import { segmentModelAnswer } from "../services/ModelAnswerService";
+import { ModelAnswerSegment } from "../../entities/ModelAnswerTypes";
+import { segmentModelAnswer } from "../../services/ModelAnswerService";
 import { LoadingButton } from "@mui/lab/";
+import { deepCopy } from "../../utils/Utils";
+import { CustomInputProps, ModelAnswerSegmenterProps } from "./ModelAnswerSegmenterTypes";
 import {
-  amber,
-  blue,
-  cyan,
-  deepOrange,
-  deepPurple,
-  green,
-  indigo,
-  lightBlue,
-  lightGreen,
-  lime,
-  orange,
-  pink,
-  purple,
-  red,
-  teal,
-  yellow
-} from '@mui/material/colors';
-import { deepCopy } from "../utils/Utils";
-
-interface CustomInputProps extends InputBaseComponentProps {
-  segments?: ModelAnswerSegment[];
-  setSegments?: (segments: ModelAnswerSegment[]) => void;
-}
+  HIGHLIGHT_COLORS,
+  PRELIMINARY_SEGMENTATION_MESSAGE,
+  NOT_ALL_TEXT_SEGMENTED,
+  RESEGMENTATION_MESSAGE,
+  NEED_NEW_SEGMENTATION
+} from "./ModelAnswerSegmenterConstants";
 
 const CustomInput = ({ value, rows, segments: segmentsState, setSegments }: CustomInputProps) => {
   const [draggingIndex, setDraggingIndex] = useState<{ segmentId: number, place: "start" | "end" }>(
@@ -315,38 +299,6 @@ const CustomInput = ({ value, rows, segments: segmentsState, setSegments }: Cust
   );
 };
 
-interface ModelAnswerSegmenterProps {
-  modelAnswer?: string;
-  setModelAnswer?: (modelAnswer: string) => void;
-  setSegments?: (segments: ModelAnswerSegment[]) => void;
-  rows?: number;
-}
-
-const HIGHLIGHT_COLORS = [
-  amber,
-  blue,
-  cyan,
-  deepOrange,
-  deepPurple,
-  green,
-  indigo,
-  lightBlue,
-  lightGreen,
-  lime,
-  orange,
-  pink,
-  purple,
-  red,
-  teal,
-  yellow
-];
-
-/* eslint-disable max-len */
-const PRELIMINARY_SEGMENTATION_MESSAGE = 'This model answer is not yet segmented. We will suggest a segmentation for you.';
-const RESEGMENTATION_MESSAGE = 'This model answer has been segmented. You can edit the segmentation by dragging on segments, or add marks. Note that ungraded segments will look lighter.';
-const NOT_ALL_TEXT_SEGMENTED = 'Not all text is segmented. You can edit the segmentation by dragging on segments, or double click to add new segments.';
-const NEED_NEW_SEGMENTATION = 'You have edited the model answer. If you want us to suggest a new segmentation, click "Smart segmentation" below.';
-/* eslint-enable max-len */
 
 const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
   const [mode, setMode] = useState<'grade' | 'edit'>('edit');
@@ -356,7 +308,12 @@ const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
       ? useState<string>(props.modelAnswer ?? '')
       : [props.modelAnswer, props.setModelAnswer];
 
-  const [segments, setSegments] = useState<ModelAnswerSegment[]>([]);
+  const [segments, setSegments] =
+    props.segments === undefined
+      || props.setSegments === undefined
+      ? useState<ModelAnswerSegment[]>(props.segments ?? [])
+      : [props.segments, props.setSegments];
+
   const [loading, setLoading] = useState(false);
   const [needSegmentation, setNeedSegmentation] = useState(false);
 
