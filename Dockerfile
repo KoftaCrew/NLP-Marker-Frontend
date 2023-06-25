@@ -12,6 +12,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 COPY --from=build /app/build ./build
+RUN npm install -g serve
 
 ENV NODE_ENV production
 
