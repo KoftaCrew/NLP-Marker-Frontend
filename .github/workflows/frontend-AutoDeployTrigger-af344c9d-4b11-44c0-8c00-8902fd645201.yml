@@ -6,9 +6,6 @@ on:
   push:
     branches: 
       [ master ]
-    paths:
-    - '"./Dockerfile"/**'
-    - '.github/workflows/frontend-AutoDeployTrigger-af344c9d-4b11-44c0-8c00-8902fd645201.yml'
 
   # Allow mannually trigger 
   workflow_dispatch:
@@ -19,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout to the branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Azure Login
         uses: azure/login@v1
@@ -29,7 +26,7 @@ jobs:
       - name: Build and push container image to registry
         uses: azure/container-apps-deploy-action@v1
         with:
-          appSourcePath: ${{ github.workspace }}"./Dockerfile" 
+          appSourcePath: ${{ github.workspace }} 
           registryUrl: koftacrew.azurecr.io
           registryUsername: ${{ secrets.FRONTEND_REGISTRY_USERNAME }}
           registryPassword: ${{ secrets.FRONTEND_REGISTRY_PASSWORD }}
