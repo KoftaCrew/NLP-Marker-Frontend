@@ -1,7 +1,7 @@
 import { createContext } from "react";
-import { UserContextType } from "../entities/UserContext";
+import { UserContextType } from "./UserContextTypes";
 
 export const UserContext = createContext<UserContextType>({
   user: null,
-  setUser: () => {/**/}
+  setUser: () => { /**/ }
 });

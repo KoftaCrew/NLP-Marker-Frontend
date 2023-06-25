@@ -8,6 +8,7 @@
     "@headlessui/react": "^1.7.5",
     "@headlessui/tailwindcss": "^0.1.2",
     "@heroicons/react": "^2.0.13",
+    "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^5.0.0-alpha.134",
     "@mui/material": "^5.13.5",
     "@reduxjs/toolkit": "^1.9.1",

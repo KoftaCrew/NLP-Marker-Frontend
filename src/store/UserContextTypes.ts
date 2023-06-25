@@ -1,4 +1,4 @@
-import { User } from "./User";
+import { User } from "../entities/User";
 
 export interface UserContextType {
   user: User | null;
