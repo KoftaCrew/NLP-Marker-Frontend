@@ -5,17 +5,18 @@ import CustomModal from "../CustomModal/CustomModal";
 const space = " ";
 const defaultBackgroundColor = "#b1dae7";
 
-const adjModelParser = (adj: number[][]) => {
-  const adjModel: number[][] = [[]];
-  for (let i = 0; i < adj.length; i++) {
-    for (let j = 0; j < adj[i].length; j++) {
-      adjModel[adj[i][j]].push(i);
-    }
-  }
-  return adjModel;
-};
 
 const InsightsViewer = (props: InsightsViewerProps) => {
+  const adjModelParser = (adj: number[][]) => {
+    const adjModel: number[][] = Array(props.modelTokens.length).fill([]);
+    for (let i = 0; i < adj.length; i++) {
+      for (let j = 0; j < adj[i].length; j++) {
+        adjModel[adj[i][j]].push(adj[i][j]);
+      }
+    }
+    return adjModel;
+  };
+
   const adjModel: number[][] = adjModelParser(props.adj);
 
   //highlight related states
