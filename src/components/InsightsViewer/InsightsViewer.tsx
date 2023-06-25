@@ -7,17 +7,21 @@ const defaultBackgroundColor = "#b1dae7";
 
 
 const InsightsViewer = (props: InsightsViewerProps) => {
-  const adjModelParser = (adj: number[][]) => {
-    const adjModel: number[][] = Array(props.modelTokens.length).fill([]);
-    for (let i = 0; i < adj.length; i++) {
-      for (let j = 0; j < adj[i].length; j++) {
-        adjModel[adj[i][j]].push(adj[i][j]);
+
+  const adjModel: number[][] = useMemo(() => {
+    const adjModel: number[][] = [];
+
+    for (let i = 0; i < props.modelTokens.length; i++) { //this is for javascript idiocy
+      adjModel.push([]);
+    }
+
+    for (let i = 0; i < props.adj.length; i++) {
+      for (let j = 0; j < props.adj[i].length; j++) {
+        adjModel[props.adj[i][j]].push(i);
       }
     }
     return adjModel;
-  };
-
-  const adjModel: number[][] = adjModelParser(props.adj);
+  }, [props.adj, props.modelTokens]);
 
   //highlight related states
   const [idx, setIdx] = useState(-1);
@@ -62,8 +66,7 @@ const InsightsViewer = (props: InsightsViewerProps) => {
   }, [idx, tokenType]);
 
   const handleMouseLeave = () => {
-    const newHighlighted: boolean[] = Array(props.modelTokens.length);
-    newHighlighted.fill(false);
+
     setIdx(-1);
     setTokenType(-1);
   };
@@ -78,9 +81,6 @@ const InsightsViewer = (props: InsightsViewerProps) => {
 
   const handleOpen = (key: string, index: number) => {
     key === "first" ? setOpenStud(true) : setOpenModel(true);
-    // key === "first" ?
-    //   setModalContent(props.studentInsights === undefined ? "No Insights available" : props.studentInsights[index]) :
-    //   setModalContent(props.modelInsights === undefined ? "No Insights available" : props.modelInsights[index]);
     let modalContent = "";
     if (key === "first") {
       if (props.studentInsights === undefined) {
@@ -122,7 +122,9 @@ const InsightsViewer = (props: InsightsViewerProps) => {
 
   return (
     <>
-      <CustomModal key='first' open={openStud !== openModel} handleClose={handleClose} title={modalTitle} content={modalContent} grading={modalGrading} />
+      <CustomModal key='first'
+        open={openStud !== openModel} handleClose={handleClose}
+        title={modalTitle} content={modalContent} grading={modalGrading} />
       <div className='bg-gray-300 w-full'>
         <div className='text-center '>Insights Viewer</div>
         <div className='flex justify-evenly text-center mb-2'>
