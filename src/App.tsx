@@ -47,11 +47,11 @@ function App() {
               </Toolbar>
             </Container>
           </AppBar>
-          <div className='flex-grow'>
+          <div className='flex-grow overflow-auto'>
             <AppBarContext.Provider value={{ appBarTitle, setAppBarTitle, appBarButtons, setAppBarButtons }}>
               <Routes>
                 <Route index element={<Home />} />
-                <Route path='/student-exam' element={<StudentExam />} />
+                <Route path='/student-exam/' element={<StudentExam />} />
               </Routes>
             </AppBarContext.Provider>
           </div>
