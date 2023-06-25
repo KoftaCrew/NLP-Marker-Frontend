@@ -3,4 +3,5 @@ export type CustomModalProps = {
   handleClose: () => void,
   title: string,
   content: string,
+  grading: string,
 };

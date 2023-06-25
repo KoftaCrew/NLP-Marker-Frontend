@@ -28,6 +28,9 @@ const CustomModal = (props: CustomModalProps) => {
         <Typography id='modal-modal-description' sx={{ mt: 2 }}>
           {props.content}
         </Typography>
+        <Typography id='modal-modal-description' sx={{ mt: 2 }}>
+          {props.grading}
+        </Typography>
       </Box>
     </Modal>
   );

@@ -1,4 +1,4 @@
-import {useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { InsightsViewerProps } from "./InsightsViewerTypes";
 import CustomModal from "../CustomModal/CustomModal";
 
@@ -70,36 +70,74 @@ const InsightsViewer = (props: InsightsViewerProps) => {
   //modal related states
   const [modalTitle, setModalTitle] = useState("");
   const [modalContent, setModalContent] = useState("");
+  const [modalGrading, setModalGrading] = useState("");
 
   const [openStud, setOpenStud] = useState(false);
   const [openModel, setOpenModel] = useState(false);
 
-  const handleOpen = (key: string) => {
+  const handleOpen = (key: string, index: number) => {
     key === "first" ? setOpenStud(true) : setOpenModel(true);
+    // key === "first" ?
+    //   setModalContent(props.studentInsights === undefined ? "No Insights available" : props.studentInsights[index]) :
+    //   setModalContent(props.modelInsights === undefined ? "No Insights available" : props.modelInsights[index]);
+    let modalContent = "";
+    if (key === "first") {
+      if (props.studentInsights === undefined) {
+        modalContent += "No Insights available";
+      } else {
+        modalContent += props.studentInsights[index];
+      }
+      if (props.answerGrade === undefined) {
+        setModalGrading("No Answer Grade available");
+      }
+      else {
+        setModalGrading(props.answerGrade[index].toString());
+      }
+    } else {
+      if (props.modelInsights === undefined) {
+        modalContent += "No Insights available";
+      } else {
+        modalContent += props.modelInsights[index];
+      }
+      if (props.modelGrade === undefined) {
+        setModalGrading("No Model Grade available");
+      } else {
+        setModalGrading(props.modelGrade[index].toString());
+      }
+    }
+    setModalContent(modalContent);
   };
 
   const handleClose = () => {
     setOpenStud(false);
     setOpenModel(false);
+    setModalContent("");
   };
 
   const testClick = (key: string, item: string, index: number) => {
     setModalTitle(item);
-    setModalContent(index.toString());
-    handleOpen(key);
+    handleOpen(key, index);
   };
 
   return (
     <>
-      <CustomModal key='first' open={openStud} handleClose={handleClose} title={modalTitle} content={modalContent} />
+      <CustomModal key='first' open={openStud !== openModel} handleClose={handleClose} title={modalTitle} content={modalContent} grading={modalGrading} />
       <div className='bg-gray-300 w-full'>
-        <div className='text-center'>InsightsViewer</div>
-        <div className='flex'>
-          <span className='w-1/2'>Student Answer</span>
-          <span className='w-1/2'>Model Answer</span>
+        <div className='text-center '>Insights Viewer</div>
+        <div className='flex justify-evenly text-center mb-2'>
+          <span className='w-1/2 '>
+            <span className='bg-white px-4 py-2 rounded-lg border border-black'>
+              Student Answer
+            </span>
+          </span>
+          <span className='w-1/2'>
+            <span className='bg-white px-4 py-2 rounded-lg border border-black'>
+              Model Answer
+            </span>
+          </span>
         </div>
         <div className='flex justify-evenly'>
-          <span className='m-2 p-2 bg-white rounded border-solid border-2 border-black w-2/5 text-center'>
+          <span className='m-2 p-2 bg-white rounded border-solid border-2 border-black w-1/2 text-center'>
             {
               props.studTokens.map((item, index) => <span className=''
                 onMouseDown={() => {
@@ -120,11 +158,11 @@ const InsightsViewer = (props: InsightsViewerProps) => {
             }
           </span>
 
-          <span className='m-2 p-2 bg-white rounded border-solid border-2 border-black w-2/5 text-center'>
+          <span className='m-2 p-2 bg-white rounded border-solid border-2 border-black w-1/2 text-center'>
             {
               props.modelTokens.map((item, index) => <span
                 onMouseDown={() => {
-                  testClick("first", item, index);
+                  testClick("second", item, index);
                 }}
                 style={{
                   backgroundColor: isHighlightedModel[index] ? defaultBackgroundColor : "white"
@@ -134,8 +172,6 @@ const InsightsViewer = (props: InsightsViewerProps) => {
                   setTokenType(1);
                 }}
                 onMouseLeave={() => handleMouseLeave()}>
-                <CustomModal
-                  key='second' open={openModel} handleClose={handleClose} title={item} content={index.toString()} />
                 {item}
                 <span style={{ backgroundColor: "white" }}>{space}</span>
               </span>)
