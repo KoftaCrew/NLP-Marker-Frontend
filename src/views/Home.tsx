@@ -2,14 +2,14 @@ import { useState } from "react";
 import { User } from "../entities/User";
 import { UserContext } from "../store/UserContext";
 import When from "../components/When";
-import Login from "../components/Login";
-import Dashboard from "../components/Dashboard";
+import Login from "./Login";
+import Dashboard from "./Dashboard";
 
 const Home = () => {
   const [user, setUser] = useState<User | null>(null);
 
   return (
-    <UserContext.Provider value={{user, setUser}}>
+    <UserContext.Provider value={{ user, setUser }}>
       <When isTrue={user === null}>
         <Login />
       </When>

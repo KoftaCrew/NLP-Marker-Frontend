@@ -1,7 +1,7 @@
 import { ReactComponentElement } from "react";
 
 export type StudentAnswersProps = {
-  studentAnswers: StudentAnswer[]
+  examId: string;
 };
 
 export type StudentAnswer = {

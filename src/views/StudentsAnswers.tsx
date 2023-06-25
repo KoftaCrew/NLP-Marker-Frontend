@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { StudentAnswersProps } from '../entities/StudentAnswersTypes';
+import { StudentAnswer, StudentAnswersProps } from '../entities/StudentAnswersTypes';
 import ListItemButton from '@mui/material/ListItemButton';
 import List from '@mui/material/List';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -9,7 +9,8 @@ import Person4Icon from '@mui/icons-material/Person4';
 
 const StudentsAnswers = (props: StudentAnswersProps) => {
   //this should be a map of student name to InsightView
-  const answerMap = props.studentAnswers;
+  // TODO: Handle answermap from props.examId
+  const answerMap: StudentAnswer[] = []; // props.studentAnswers;
 
   const [idx, setIdx] = useState(0);
 

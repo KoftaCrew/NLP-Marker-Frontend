@@ -31,8 +31,9 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import ShareIcon from '@mui/icons-material/Share';
-import When from "./When";
+import When from "../components/When";
 import { ExamModel } from "../entities/Exam";
+import StudentsAnswers from "./StudentsAnswers";
 
 const Dashboard = () => {
   const { user, setUser } = useContext(UserContext);
@@ -320,7 +321,9 @@ const Dashboard = () => {
       {/* Creating/Editing Exam */}
     </When>
     <When isTrue={mode === 'results'}>
-      {/* Students' answers */}
+      <StudentsAnswers
+        examId={examId}
+      />
     </When>
   </div>);
 };
