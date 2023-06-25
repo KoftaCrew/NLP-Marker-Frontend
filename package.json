@@ -1,6 +1,5 @@
 {
   "name": "nlp-marker",
-  "homepage": "NLP-Marker-Frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
