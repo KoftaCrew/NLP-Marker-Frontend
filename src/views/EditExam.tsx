@@ -27,7 +27,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import When from "../components/When";
 import { AppBarContext } from "../store/AppBarContext";
 
-const EditExam = (props: { id: string }) => {
+const EditExam = (props: { id: string, onClose: () => void }) => {
 
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -240,18 +240,33 @@ const EditExam = (props: { id: string }) => {
                     <DeleteIcon fontSize='inherit' />
                   </IconButton>
                   {index > 0 &&
-                  <IconButton onClick={handleMoveUpQuestion(index)} size='large'>
-                    <KeyboardArrowUpIcon />
-                  </IconButton>}
+                    <IconButton onClick={handleMoveUpQuestion(index)} size='large'>
+                      <KeyboardArrowUpIcon />
+                    </IconButton>}
                   {index + 1 < questions.length &&
-                  <IconButton onClick={handleMoveDownQuestion(index)} size='large'>
-                    <KeyboardArrowDownIcon />
-                  </IconButton>}
+                    <IconButton onClick={handleMoveDownQuestion(index)} size='large'>
+                      <KeyboardArrowDownIcon />
+                    </IconButton>}
                 </ButtonGroup>
               </div>
             ))}
-            <div className='flex justify-end px-14 pb-12'>
-              <Button className='w-32' color='primary' variant='contained'>Save</Button>
+            <div className='flex justify-end px-14 pb-12 gap-2'>
+              <Button
+                className='w-32'
+                color='primary'
+                variant='outlined'
+                onClick={props.onClose}
+              >
+                Cancel
+              </Button>
+              <Button
+                className='w-32'
+                color='primary'
+                variant='contained'
+                onClick={props.onClose}
+              >
+                Save
+              </Button>
             </div>
           </div>
         </When>

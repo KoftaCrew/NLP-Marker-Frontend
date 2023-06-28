@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { UserContext } from "../store/UserContext";
 import { AppBarContext } from "../store/AppBarContext";
 import {
@@ -62,54 +62,55 @@ const Dashboard = () => {
     ]);
   }, [user]);
 
-  useEffect(() => {
+  const fetchExams = useCallback(async () => {
     setLoading(true);
 
-    const fetchExams = async () => {
-      // TODO: Fetch exams
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setExams([
-        {
-          id: '1',
-          name: 'Exam 1',
-          description: 'Description 1',
-          mode: 'editing'
-        },
-        {
-          id: '2',
-          name: 'Exam 2',
-          description: 'Description 2',
-          mode: 'results'
-        },
-        {
-          id: '3',
-          name: 'Exam 2',
-          description: 'Description 2',
-          mode: 'results'
-        },
-        {
-          id: '4',
-          name: 'Exam 2',
-          description: 'Description 2',
-          mode: 'results'
-        },
-        {
-          id: '5',
-          name: 'Exam 2',
-          description: 'Description 2',
-          mode: 'results'
-        },
-        {
-          id: '6',
-          name: 'Exam 3',
-          mode: 'editing'
-        }
-      ]);
-    };
+    // TODO: Fetch exams
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setExams([
+      {
+        id: '1',
+        name: 'Exam 1',
+        description: 'Description 1',
+        mode: 'editing'
+      },
+      {
+        id: '2',
+        name: 'Exam 2',
+        description: 'Description 2',
+        mode: 'results'
+      },
+      {
+        id: '3',
+        name: 'Exam 2',
+        description: 'Description 2',
+        mode: 'results'
+      },
+      {
+        id: '4',
+        name: 'Exam 2',
+        description: 'Description 2',
+        mode: 'results'
+      },
+      {
+        id: '5',
+        name: 'Exam 2',
+        description: 'Description 2',
+        mode: 'results'
+      },
+      {
+        id: '6',
+        name: 'Exam 3',
+        mode: 'editing'
+      }
+    ]);
 
-    fetchExams()
-      .then(() => setLoading(false));
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    fetchExams();
+  }, [fetchExams]);
 
   const handleOpenExam = (exam: ExamModel) => () => {
     setExamId(exam.id);
@@ -322,7 +323,14 @@ const Dashboard = () => {
       </Dialog>
     </When>
     <When isTrue={mode === 'editing'}>
-      <EditExam id={examId}/>
+      <EditExam
+        id={examId}
+        onClose={() => {
+          setExamId('');
+          setMode('idle');
+          fetchExams();
+        }}
+      />
     </When>
     <When isTrue={mode === 'results'}>
       <StudentsAnswers
