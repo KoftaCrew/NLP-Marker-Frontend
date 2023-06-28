@@ -17,7 +17,7 @@ import { StudentQuestion } from "../entities/Question";
 
 const StudentsExam = (props: { id: string }) => {
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [studentExam, setStudentExam] = useState<StudentExam>({
     id: '',
     name: '',
@@ -53,6 +53,14 @@ const StudentsExam = (props: { id: string }) => {
           {
             title: "summer is cold or hot 3",
             studentAnswer: ''
+          },
+          {
+            title: "summer is cold or hot 3",
+            studentAnswer: ''
+          },
+          {
+            title: "summer is cold or hot 3",
+            studentAnswer: ''
           }
         ]
       });
@@ -73,14 +81,14 @@ const StudentsExam = (props: { id: string }) => {
       <When isTrue={loading}>
         <LinearProgress />
       </When>
-      {questions.map((question, index) => (
-        <Card className='min-h-fit my-8'>
+      <Card className='min-h-fit my-8'>
+        {questions.map((question, index) => (
           <CardContent>
             <Typography>{index + 1}. {question.title}</Typography>
             <TextField
               id='standard-basic'
               key={index}
-              label='Solution'
+              label='Answer'
               variant='outlined'
               multiline
               rows='6'
@@ -90,11 +98,13 @@ const StudentsExam = (props: { id: string }) => {
               sx={{ backgroundColor: '#FFFFFF', width: '100%', borderRadius: 2 }}
             />
           </CardContent>
-        </Card>
-      ))}
-      <div className='flex justify-center px-28 pb-12'>
-        <Button className='w-32' color='primary' variant='contained'>Submit</Button>
-      </div>
+        ))}
+      </Card>
+      <When isTrue={!loading}>
+        <div className='flex justify-center px-28 pb-12'>
+          <Button className='w-32' color='primary' variant='contained'>Submit</Button>
+        </div>
+      </When>
     </Container>
   );
 };

@@ -39,7 +39,7 @@ const EditExam = (props: { id: string }) => {
     name: ''
   });
   const [editNameMode, setEditNameMode] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const questions = useMemo(() => exam.questions, [exam]);
   const setQuestions = useCallback((questions: Question[]) => {
@@ -180,78 +180,81 @@ const EditExam = (props: { id: string }) => {
         <When isTrue={loading}>
           <LinearProgress />
         </When>
-        <div className='flex flex-col gap-8'>
-          <div className='flex'>
-            <Card className='p-4 w-full'>
-              {editNameMode ?
-                <div className='flex'>
-                  <TextField id='standard-basic' value={examName} onChange={handleEditingExamName} variant='standard' />
-                  <IconButton className='mx-1' size='large' onClick={disableEditingNameMode}>
-                    <CheckIcon />
-                  </IconButton>
-                </div> :
-                <div className='flex flex-wrap items-center'>
-                  <Typography className='h-fit' variant='h5' >{examName}</Typography>
-                  <div className='mx-1'>
-                    <IconButton size='small' onClick={enableEditingNameMode}>
-                      <EditIcon />
+        <When isTrue={!loading}>
+          <div className='flex flex-col gap-8'>
+            <div className='flex'>
+              <Card className='p-4 w-full'>
+                {editNameMode ?
+                  <div className='flex'>
+                    <TextField id='standard-basic' value={examName}
+                      onChange={handleEditingExamName} variant='standard' />
+                    <IconButton className='mx-1' size='large' onClick={disableEditingNameMode}>
+                      <CheckIcon />
                     </IconButton>
-                  </div>
-                </div>}
-            </Card>
-            <ButtonGroup className='my-3 mx-1' orientation='vertical'>
-              <IconButton onClick={handleAddQuestion(-1)} size='large'>
-                <AddCircleIcon />
-              </IconButton>
-            </ButtonGroup>
-          </div>
-          {questions.map((question, index) => (
-            <div key={index} className='flex'>
-              <Card className='p-6 w-full'>
-                <div className='flex flex-wrap'>
-                  <Typography className='h-fit' variant='h5' >Question {index + 1}</Typography>
-                </div>
-                <TextField
-                  id='standard-basic'
-                  key={index}
-                  label='Question title'
-                  variant='outlined'
-                  multiline
-                  rows='3'
-                  margin='normal'
-                  value={question.title}
-                  onChange={handleTitleOnChange(index)}
-                  sx={{ backgroundColor: '#FFFFFF', width: '100%', borderRadius: 2 }}
-                />
-                <div className='my-8'>
-                  <ModelAnswerSegmenter rows={8}
-                    modelAnswer={question.modelAnswer.body} setModelAnswer={setModelAnswer(index)}
-                    segments={question.modelAnswer.segements} setSegments={setSegments(index)}
-                    mode={question.modelAnswer.mode} setMode={setMode(index)} />
-                </div>
+                  </div> :
+                  <div className='flex flex-wrap items-center'>
+                    <Typography className='h-fit' variant='h5' >{examName}</Typography>
+                    <div className='mx-1'>
+                      <IconButton size='small' onClick={enableEditingNameMode}>
+                        <EditIcon />
+                      </IconButton>
+                    </div>
+                  </div>}
               </Card>
-              <ButtonGroup className='my-8 mx-1' orientation='vertical'>
-                <IconButton onClick={handleAddQuestion(index)} size='large'>
+              <ButtonGroup className='my-3 mx-1' orientation='vertical'>
+                <IconButton onClick={handleAddQuestion(-1)} size='large'>
                   <AddCircleIcon />
                 </IconButton>
-                <IconButton onClick={handleOpenDeleteDialog(index)} aria-label='delete' size='large'>
-                  <DeleteIcon fontSize='inherit' />
-                </IconButton>
-                {index > 0 &&
+              </ButtonGroup>
+            </div>
+            {questions.map((question, index) => (
+              <div key={index} className='flex'>
+                <Card className='p-6 w-full'>
+                  <div className='flex flex-wrap'>
+                    <Typography className='h-fit' variant='h5' >Question {index + 1}</Typography>
+                  </div>
+                  <TextField
+                    id='standard-basic'
+                    key={index}
+                    label='Question title'
+                    variant='outlined'
+                    multiline
+                    rows='3'
+                    margin='normal'
+                    value={question.title}
+                    onChange={handleTitleOnChange(index)}
+                    sx={{ backgroundColor: '#FFFFFF', width: '100%', borderRadius: 2 }}
+                  />
+                  <div className='my-8'>
+                    <ModelAnswerSegmenter rows={8}
+                      modelAnswer={question.modelAnswer.body} setModelAnswer={setModelAnswer(index)}
+                      segments={question.modelAnswer.segements} setSegments={setSegments(index)}
+                      mode={question.modelAnswer.mode} setMode={setMode(index)} />
+                  </div>
+                </Card>
+                <ButtonGroup className='my-8 mx-1' orientation='vertical'>
+                  <IconButton onClick={handleAddQuestion(index)} size='large'>
+                    <AddCircleIcon />
+                  </IconButton>
+                  <IconButton onClick={handleOpenDeleteDialog(index)} aria-label='delete' size='large'>
+                    <DeleteIcon fontSize='inherit' />
+                  </IconButton>
+                  {index > 0 &&
                   <IconButton onClick={handleMoveUpQuestion(index)} size='large'>
                     <KeyboardArrowUpIcon />
                   </IconButton>}
-                {index + 1 < questions.length &&
+                  {index + 1 < questions.length &&
                   <IconButton onClick={handleMoveDownQuestion(index)} size='large'>
                     <KeyboardArrowDownIcon />
                   </IconButton>}
-              </ButtonGroup>
+                </ButtonGroup>
+              </div>
+            ))}
+            <div className='flex justify-end px-14 pb-12'>
+              <Button className='w-32' color='primary' variant='contained'>Save</Button>
             </div>
-          ))}
-          <div className='flex justify-end px-14 pb-12'>
-            <Button className='w-32' color='primary' variant='contained'>Save</Button>
           </div>
-        </div>
+        </When>
       </Container>
       <Dialog
         open={deleteDialogOpen}
