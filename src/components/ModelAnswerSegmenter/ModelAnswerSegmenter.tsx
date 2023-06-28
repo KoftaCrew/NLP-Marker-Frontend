@@ -9,7 +9,7 @@ import {
   Tooltip
 } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ModelAnswerSegment } from "../../entities/ModelAnswerTypes";
+import { ModelAnswer, ModelAnswerSegment } from "../../entities/ModelAnswerTypes";
 import { segmentModelAnswer } from "../../services/ModelAnswerService";
 import { LoadingButton } from "@mui/lab/";
 import { deepCopy } from "../../utils/Utils";
@@ -301,18 +301,21 @@ const CustomInput = ({ value, rows, segments: segmentsState, setSegments }: Cust
 
 
 const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
-  const [mode, setMode] = useState<'grade' | 'edit'>('edit');
+  const [mode, setMode] =
+  props.setMode === undefined
+      ? useState<'grade' | 'edit'>(props.mode ?? 'edit')
+      : [props.mode? props.mode: 'edit', props.setMode];
+
+
   const [modelAnswer, setModelAnswer] =
-    props.modelAnswer === undefined
-      || props.setModelAnswer === undefined
+    props.setModelAnswer === undefined
       ? useState<string>(props.modelAnswer ?? '')
-      : [props.modelAnswer, props.setModelAnswer];
+      : [props.modelAnswer ? props.modelAnswer : '', props.setModelAnswer];
 
   const [segments, setSegments] =
-    props.segments === undefined
-      || props.setSegments === undefined
+      props.setSegments === undefined
       ? useState<ModelAnswerSegment[]>(props.segments ?? [])
-      : [props.segments, props.setSegments];
+      : [props.segments? props.segments: [], props.setSegments];
 
   const [loading, setLoading] = useState(false);
   const [needSegmentation, setNeedSegmentation] = useState(false);

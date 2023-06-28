@@ -11,4 +11,6 @@ export interface ModelAnswerSegmenterProps {
   segments?: ModelAnswerSegment[];
   setSegments?: (segments: ModelAnswerSegment[]) => void;
   rows?: number;
+  mode?: "grade" | "edit";
+  setMode?: (mode: "grade" | "edit") => void;
 }

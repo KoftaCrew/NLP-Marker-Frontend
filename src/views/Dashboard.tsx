@@ -34,6 +34,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import When from "../components/When";
 import { ExamModel } from "../entities/Exam";
 import StudentsAnswers from "./StudentsAnswers";
+import EditExam from "./EditExam";
 
 const Dashboard = () => {
   const { user, setUser } = useContext(UserContext);
@@ -275,7 +276,7 @@ const Dashboard = () => {
                       <ListItemIcon>
                         <ShareIcon />
                       </ListItemIcon>
-                      <ListItemText primary={exam.mode === 'editing' ? 'Start sharing to students' : 'Copy URL'} />
+                      <ListItemText primary={exam.mode === 'editing' ? 'studentsStart sharing to ' : 'Copy URL'} />
                     </MenuItem>
                   </Menu>
                 </>
@@ -320,7 +321,7 @@ const Dashboard = () => {
       </Dialog>
     </When>
     <When isTrue={mode === 'editing'}>
-      {/* Creating/Editing Exam */}
+      <EditExam id="1"/>
     </When>
     <When isTrue={mode === 'results'}>
       <StudentsAnswers
