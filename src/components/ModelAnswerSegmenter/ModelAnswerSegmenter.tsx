@@ -9,7 +9,7 @@ import {
   Tooltip
 } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ModelAnswer, ModelAnswerSegment } from "../../entities/ModelAnswerTypes";
+import { ModelAnswerSegment } from "../../entities/ModelAnswerTypes";
 import { segmentModelAnswer } from "../../services/ModelAnswerService";
 import { LoadingButton } from "@mui/lab/";
 import { deepCopy } from "../../utils/Utils";
@@ -302,9 +302,9 @@ const CustomInput = ({ value, rows, segments: segmentsState, setSegments }: Cust
 
 const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
   const [mode, setMode] =
-  props.setMode === undefined
+    props.setMode === undefined
       ? useState<'grade' | 'edit'>(props.mode ?? 'edit')
-      : [props.mode? props.mode: 'edit', props.setMode];
+      : [props.mode ? props.mode : 'edit', props.setMode];
 
 
   const [modelAnswer, setModelAnswer] =
@@ -313,9 +313,9 @@ const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
       : [props.modelAnswer ? props.modelAnswer : '', props.setModelAnswer];
 
   const [segments, setSegments] =
-      props.setSegments === undefined
+    props.setSegments === undefined
       ? useState<ModelAnswerSegment[]>(props.segments ?? [])
-      : [props.segments? props.segments: [], props.setSegments];
+      : [props.segments ? props.segments : [], props.setSegments];
 
   const [loading, setLoading] = useState(false);
   const [needSegmentation, setNeedSegmentation] = useState(false);
@@ -390,7 +390,7 @@ const ModelAnswerSegmenter = (props: ModelAnswerSegmenterProps) => {
       }}
       helperText={helperText}
     />
-    <div className='flex flex-col items-end gap-2'>
+    <div className='flex flex-row-reverse justify-between flex-wrap gap-2'>
       <LoadingButton
         loading={loading}
         variant='contained'
