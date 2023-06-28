@@ -48,7 +48,7 @@ const Dashboard = () => {
   const [sharingDialogExam, setSharingDialogExam] = useState<ExamModel | null>(null);
 
   useEffect(() => {
-    setAppBarTitle(`Welcome ${user?.name}`);
+    setAppBarTitle(`Welcome ${user?.name ?? ''}`);
     setAppBarButtons([
       <Button
         color='inherit'
@@ -60,7 +60,7 @@ const Dashboard = () => {
         Logout
       </Button>
     ]);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     setLoading(true);
@@ -238,6 +238,7 @@ const Dashboard = () => {
                     </CardActionArea>
                   </Card>
                   <Menu
+                    key={exam.id + '-menu'}
                     id={`exam-menu-${exam.id}`}
                     aria-labelledby={`exam-card-${exam.id}`}
                     anchorOrigin={{
@@ -321,7 +322,7 @@ const Dashboard = () => {
       </Dialog>
     </When>
     <When isTrue={mode === 'editing'}>
-      <EditExam id="1"/>
+      <EditExam id={examId}/>
     </When>
     <When isTrue={mode === 'results'}>
       <StudentsAnswers
