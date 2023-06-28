@@ -14,7 +14,7 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { Question } from "../entities/Question";
 import { ModelAnswerSegment } from "../entities/ModelAnswerTypes";
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -25,6 +25,7 @@ import { Exam } from "../entities/Exam";
 import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import When from "../components/When";
+import { AppBarContext } from "../store/AppBarContext";
 
 const EditExam = (props: { id: string }) => {
 
@@ -42,13 +43,21 @@ const EditExam = (props: { id: string }) => {
 
   const questions = useMemo(() => exam.questions, [exam]);
   const setQuestions = useCallback((questions: Question[]) => {
-    setExam({...exam, questions});
+    setExam({ ...exam, questions });
   }, [exam]);
 
   const examName = useMemo(() => exam.name, [exam]);
   const setExamName = useCallback((name: string) => {
-    setExam({...exam, name});
+    setExam({ ...exam, name });
   }, [exam]);
+
+
+
+  const { setAppBarTitle } = useContext(AppBarContext);
+
+  useEffect(() => {
+    setAppBarTitle('');
+  }, []);
 
   useEffect(() => {
 
