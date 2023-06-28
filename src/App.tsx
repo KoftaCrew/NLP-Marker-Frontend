@@ -1,6 +1,6 @@
 import { AppBar, Container, CssBaseline, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
 import Home from './views/Home';
-import StudentExam from './views/StudentExam';
+import StudentsExam from './views/StudentExams';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import logo from './assets/logo.png';
 import { useState } from 'react';
@@ -51,7 +51,7 @@ function App() {
             <AppBarContext.Provider value={{ appBarTitle, setAppBarTitle, appBarButtons, setAppBarButtons }}>
               <Routes>
                 <Route index element={<Home />} />
-                <Route path='/student-exam/' element={<StudentExam />} />
+                <Route path='/student-exam/' element={<StudentsExam id='1'/>} />
               </Routes>
             </AppBarContext.Provider>
           </div>

@@ -1,4 +1,4 @@
-import { Question } from "./Question";
+import { Question, StudentQuestion } from "./Question";
 
 export interface ExamModel {
   id: string;
@@ -9,4 +9,10 @@ export interface ExamModel {
 
 export interface Exam extends ExamModel{
   questions: Question[];
+}
+
+export interface StudentExam {
+  id: string;
+  name: string;
+  questions: StudentQuestion[];
 }
