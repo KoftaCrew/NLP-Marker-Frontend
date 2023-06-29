@@ -40,6 +40,10 @@ axiosInstance.interceptors.response.use(
           setAuthorizationHeader(res.data.access);
           originalRequest.headers["Authorization"] = `Bearer ${res.data.access}`;
           return axiosInstance(originalRequest);
+        })
+        .catch(() => {
+          setAuthorizationHeader("");
+          window.location.reload();
         });
     }
     return Promise.reject(error);

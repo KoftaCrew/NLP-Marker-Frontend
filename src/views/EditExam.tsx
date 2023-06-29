@@ -27,13 +27,13 @@ import CheckIcon from '@mui/icons-material/Check';
 import When from "../components/When";
 import { AppBarContext } from "../store/AppBarContext";
 
-const EditExam = (props: { id: string, onClose: () => void }) => {
+const EditExam = (props: { id: number, onClose: () => void }) => {
 
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteDialogIndex, setDeleteDialogIndex] = useState<number>(-1);
   const [exam, setExam] = useState<Exam>({
-    id: '',
+    id: -1,
     mode: 'editing',
     questions: [] as Question[],
     name: ''

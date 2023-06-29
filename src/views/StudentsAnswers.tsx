@@ -11,7 +11,7 @@ import When from '../components/When';
 import { Question } from '../entities/Question';
 
 
-const StudentsAnswers = (props: { id: string }) => {
+const StudentsAnswers = (props: { id: number }) => {
 
   const [selectedStudent, setSelectedStudent] = useState(0);
   const [selectedStudentName, setSelectedStudentName] = useState('');

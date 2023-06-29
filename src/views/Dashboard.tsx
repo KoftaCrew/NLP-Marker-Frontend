@@ -36,12 +36,13 @@ import When from "../components/When";
 import { ExamModel } from "../entities/Exam";
 import StudentsAnswers from "./StudentsAnswers";
 import EditExam from "./EditExam";
+import axiosInstance from "../services/AxiosService";
 
 const Dashboard = () => {
   const { user, setUser } = useContext(UserContext);
   const { setAppBarTitle, setAppBarButtons } = useContext(AppBarContext);
   const [mode, setMode] = useState<'idle' | 'editing' | 'results'>('idle');
-  const [examId, setExamId] = useState('');
+  const [examId, setExamId] = useState(-1);
   const [exams, setExams] = useState<ExamModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -55,7 +56,7 @@ const Dashboard = () => {
         color='inherit'
         startIcon={<HomeIcon />}
         onClick={() => {
-          setExamId('');
+          setExamId(-1);
           setMode('idle');
         }}
       >
@@ -79,46 +80,17 @@ const Dashboard = () => {
   const fetchExams = useCallback(async () => {
     setLoading(true);
 
-    // TODO: Fetch exams
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setExams([
-      {
-        id: '1',
-        name: 'Exam 1',
-        description: 'Description 1',
-        mode: 'editing'
-      },
-      {
-        id: '2',
-        name: 'Exam 2',
-        description: 'Description 2',
-        mode: 'results'
-      },
-      {
-        id: '3',
-        name: 'Exam 2',
-        description: 'Description 2',
-        mode: 'results'
-      },
-      {
-        id: '4',
-        name: 'Exam 2',
-        description: 'Description 2',
-        mode: 'results'
-      },
-      {
-        id: '5',
-        name: 'Exam 2',
-        description: 'Description 2',
-        mode: 'results'
-      },
-      {
-        id: '6',
-        name: 'Exam 3',
-        mode: 'editing'
-      }
-    ]);
+    const exams: ExamModel[] = (
+      await axiosInstance.get('/exam/')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ).data.map((exam: any) => ({
+      id: exam.id,
+      name: exam.name,
+      description: exam.description,
+      mode: exam.mode === 0 ? 'editing' : 'results'
+    }));
 
+    setExams(exams);
     setLoading(false);
   }, []);
 
@@ -135,7 +107,7 @@ const Dashboard = () => {
     // TODO: Delete exam
     exam;
 
-    setExamId('');
+    setExamId(-1);
     setAnchorEl(null);
   };
 
@@ -147,7 +119,7 @@ const Dashboard = () => {
       // TODO: Copy exam URL
       navigator.clipboard.writeText(`${window.location.origin}/student-exam?id=${exam.id}`);
     }
-    setExamId('');
+    setExamId(-1);
     setAnchorEl(null);
   };
 
@@ -193,7 +165,7 @@ const Dashboard = () => {
             <ListItem disablePadding>
               <ListItemButton
                 onClick={() => {
-                  setExamId('');
+                  setExamId(-1);
                   setMode('editing');
                 }}
               >
@@ -266,7 +238,7 @@ const Dashboard = () => {
                     }}
                     anchorEl={anchorEl}
                     open={exam.id === examId}
-                    onClose={() => setExamId('')}
+                    onClose={() => setExamId(-1)}
                   >
                     <MenuItem
                       onClick={handleOpenExam(exam)}
@@ -340,7 +312,7 @@ const Dashboard = () => {
       <EditExam
         id={examId}
         onClose={() => {
-          setExamId('');
+          setExamId(-1);
           setMode('idle');
           fetchExams();
         }}
