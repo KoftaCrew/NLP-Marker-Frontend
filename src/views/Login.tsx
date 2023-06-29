@@ -82,6 +82,7 @@ const Login = () => {
       /* eslint-disable camelcase */
       const { first_name, last_name, email } = userResponse.data[0];
 
+      setAuthorizationHeader(access);
       setUser({
         username,
         firstName: first_name,
@@ -89,7 +90,6 @@ const Login = () => {
         email,
         refreshToken: refresh
       });
-      setAuthorizationHeader(access);
       /* eslint-enable camelcase */
 
     } catch (error) {

@@ -4,7 +4,7 @@ import { UserContext } from "../store/UserContext";
 import When from "../components/When";
 import Login from "./Login";
 import Dashboard from "./Dashboard";
-import axiosInstance from "../services/AxiosService";
+import axiosInstance, { setAuthorizationHeader } from "../services/AxiosService";
 
 const Home = () => {
   const [user, setInternalUser] = useState<User | null | undefined>(undefined);
@@ -37,6 +37,7 @@ const Home = () => {
 
           const user = localStorage.getItem('user');
           if (user) {
+            setAuthorizationHeader(accessToken);
             setUser(JSON.parse(user));
           }
           else {

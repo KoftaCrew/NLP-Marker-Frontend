@@ -53,6 +53,7 @@ const Dashboard = () => {
     setAppBarTitle(`Welcome ${user?.firstName ?? ''} ${user?.lastName ?? ''}!`);
     setAppBarButtons([
       <Button
+        key={0}
         color='inherit'
         startIcon={<HomeIcon />}
         onClick={() => {
@@ -63,6 +64,7 @@ const Dashboard = () => {
         Home
       </Button>,
       <Button
+        key={1}
         color='inherit'
         startIcon={<LogoutIcon />}
         sx={{
@@ -96,7 +98,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchExams();
-  }, [fetchExams]);
+  }, [fetchExams, user]);
 
   const handleOpenExam = (exam: ExamModel) => () => {
     setExamId(exam.id);
