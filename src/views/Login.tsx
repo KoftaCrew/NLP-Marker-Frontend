@@ -80,7 +80,7 @@ const Login = () => {
       });
 
       /* eslint-disable camelcase */
-      const { first_name, last_name, email } = userResponse.data.results[0];
+      const { first_name, last_name, email } = userResponse.data[0];
 
       setUser({
         username,
