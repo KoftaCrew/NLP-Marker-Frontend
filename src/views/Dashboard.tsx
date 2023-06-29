@@ -278,7 +278,7 @@ const Dashboard = () => {
                       <ListItemIcon>
                         <ShareIcon />
                       </ListItemIcon>
-                      <ListItemText primary={exam.mode === 'editing' ? 'studentsStart sharing to ' : 'Copy URL'} />
+                      <ListItemText primary={exam.mode === 'editing' ? 'Start sharing to students' : 'Copy URL'} />
                     </MenuItem>
                   </Menu>
                 </>
