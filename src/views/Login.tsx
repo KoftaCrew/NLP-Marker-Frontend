@@ -3,6 +3,8 @@ import { UserContext } from "../store/UserContext";
 import { Box, TextField, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { AppBarContext } from "../store/AppBarContext";
+import axiosInstance from "../services/AxiosService";
+import { AxiosError } from "axios";
 
 
 const Login = () => {
@@ -22,17 +24,84 @@ const Login = () => {
 
   const handleOnSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const username = (event.target as HTMLFormElement).username.value;
 
-    // TODO: Add authentication
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setUser({
-      username,
-      name: mode === "login" ? 'John Doe' : (event.target as HTMLFormElement).fullname.value,
-      email: mode === "login" ? 'john.deo@example.com' : (event.target as HTMLFormElement).email.value
-    });
-    // setError('Invalid username or password');
+
+    const username = (event.target as HTMLFormElement).username.value;
+    const password = (event.target as HTMLFormElement).password.value;
+
+    if (mode === 'register') {
+      const firstName = (event.target as HTMLFormElement).firstName.value;
+      const lastName = (event.target as HTMLFormElement).lastName.value;
+      const email = (event.target as HTMLFormElement).email.value;
+
+      /* eslint-disable camelcase */
+      try {
+        await axiosInstance.post('/auth/sign-up/', {
+          username,
+          password,
+          confirm_password: password,
+          first_name: firstName,
+          last_name: lastName,
+          email
+        });
+
+        setError('');
+        setMode('login');
+
+        setLoading(false);
+        return;
+      /* eslint-enable camelcase */
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (!error.response) {
+            error.message && setError(error.message);
+          } else {
+            setError(error.response.data.detail ?? error.message);
+          }
+          setLoading(false);
+        }
+        return;
+      }
+    }
+
+    try {
+      const response = await axiosInstance.post('/auth/login/', {
+        username,
+        password
+      });
+
+      const { access, refresh } = response.data;
+
+      const userResponse = await axiosInstance.get('/auth/profile/', {
+        headers: {
+          Authorization: `Bearer ${access}`
+        }
+      });
+
+      /* eslint-disable camelcase */
+      const { first_name, last_name, email } = userResponse.data.results[0];
+
+      setUser({
+        username,
+        firstName: first_name,
+        lastName: last_name,
+        email,
+        accessToken: access,
+        refreshToken: refresh
+      });
+      /* eslint-enable camelcase */
+
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (!error.response) {
+          error.message && setError(error.message);
+        } else {
+          setError(error.response.data.detail ?? error.message);
+        }
+      }
+    }
+
     setLoading(false);
   };
 
@@ -52,8 +121,14 @@ const Login = () => {
       {mode === 'register' && <>
         <TextField
           required
-          id='fullname'
-          label='Name'
+          id='firstName'
+          label='First Name'
+          variant='outlined'
+        />
+        <TextField
+          required
+          id='lastName'
+          label='Last Name'
           variant='outlined'
         />
         <TextField
