@@ -26,6 +26,15 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import When from "../components/When";
 import { AppBarContext } from "../store/AppBarContext";
+import axiosInstance from "../services/AxiosService";
+import { ExamSerializer } from "../entities/ExamSerializer";
+
+const EmptyExam : Exam = {
+  id: -1,
+  name: 'Untitled',
+  mode: 'editing',
+  questions: []
+};
 
 const EditExam = (props: { id: number, onClose: () => void }) => {
 
@@ -62,33 +71,13 @@ const EditExam = (props: { id: number, onClose: () => void }) => {
   useEffect(() => {
 
     const fetchExam = async () => {
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setExam({
-        id: props.id,
-        name: 'English Exam',
-        mode: 'editing',
-        questions: [
-          {
-            title: "tst1",
-            modelAnswer: {
-              body: "testttttt herereere 1jiuo3242"
-            }
-          },
-          {
-            title: "tst2",
-            modelAnswer: {
-              body: "testttttt herereere 1jiuo3242"
-            }
-          },
-          {
-            title: "tst3",
-            modelAnswer: {
-              body: "testttttt herereere 1jiuo3242"
-            }
-          }
-        ]
-      });
+      if (props.id === -1) {
+        setExam(EmptyExam);
+      }
+      else {
+        const request = await axiosInstance.get(`/exam/${props.id}`);
+        setExam(ExamSerializer(request.data));
+      }
     };
     setLoading(true);
 
