@@ -32,7 +32,7 @@ jobs:
           registryPassword: ${{ secrets.FRONTEND_REGISTRY_PASSWORD }}
           containerAppName: frontend
           resourceGroup: nlp-marking-assistant
-          imageToBuild: koftacrew.azurecr.io/frontend:${{ github.sha }}
+          imageToBuild: koftacrew.azurecr.io/frontend:lastest
           dockerfilePath: Dockerfile
 
      
