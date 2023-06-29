@@ -5,6 +5,11 @@ const axiosInstance = axios.create({
 });
 
 export const setAuthorizationHeader = (token: string) => {
+  if (token === "") {
+    delete axiosInstance.defaults.headers.common["Authorization"];
+    return;
+  }
+
   axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 };
 
