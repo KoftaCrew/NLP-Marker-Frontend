@@ -4,13 +4,12 @@ import { UserContext } from "../store/UserContext";
 import When from "../components/When";
 import Login from "./Login";
 import Dashboard from "./Dashboard";
-import { setAuthorizationHeader } from "../services/AxiosService";
+import axiosInstance from "../services/AxiosService";
 
 const Home = () => {
   const [user, setInternalUser] = useState<User | null | undefined>(undefined);
 
   const setUser = useCallback((user: User | null) => {
-    setAuthorizationHeader(user?.accessToken ?? '');
     setInternalUser(user);
   }, []);
 
@@ -23,9 +22,33 @@ const Home = () => {
   }, [user]);
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user) {
-      setUser(JSON.parse(user));
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      const checkUser = async () => {
+        try {
+          await axiosInstance.get(
+            '/auth/profile/',
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`
+              }
+            }
+          );
+
+          const user = localStorage.getItem('user');
+          if (user) {
+            setUser(JSON.parse(user));
+          }
+          else {
+            setUser(null);
+          }
+        }
+        catch (error) {
+          setUser(null);
+        }
+      };
+
+      checkUser();
     }
     else {
       setUser(null);

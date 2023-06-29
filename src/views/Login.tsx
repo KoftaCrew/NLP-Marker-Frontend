@@ -3,7 +3,7 @@ import { UserContext } from "../store/UserContext";
 import { Box, TextField, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { AppBarContext } from "../store/AppBarContext";
-import axiosInstance from "../services/AxiosService";
+import axiosInstance, { setAuthorizationHeader } from "../services/AxiosService";
 import { AxiosError } from "axios";
 
 
@@ -87,9 +87,9 @@ const Login = () => {
         firstName: first_name,
         lastName: last_name,
         email,
-        accessToken: access,
         refreshToken: refresh
       });
+      setAuthorizationHeader(access);
       /* eslint-enable camelcase */
 
     } catch (error) {
