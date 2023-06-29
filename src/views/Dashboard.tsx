@@ -349,11 +349,6 @@ const Dashboard = () => {
     <When isTrue={mode === 'results'}>
       <StudentsAnswers
         id={examId}
-        onClose={() => {
-          setExamId('');
-          setMode('idle');
-          fetchExams();
-        }}
       />
     </When>
   </>);

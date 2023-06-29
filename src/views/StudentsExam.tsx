@@ -1,12 +1,12 @@
-import { Card,
+import {
+  Card,
   CardContent,
-  ThemeProvider,
   Typography,
-  createTheme,
   TextField,
   Button,
   Container,
-  LinearProgress } from "@mui/material";
+  LinearProgress
+} from "@mui/material";
 import React from "react";
 import { useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { AppBarContext } from "../store/AppBarContext";
@@ -85,8 +85,8 @@ const StudentsExam = (props: { id: string, student: Student }) => {
         </When>
         <Card className='p-6 my-8'>
           <div className='flex justify-between'>
-            <Typography variant="h5">Name: {props.student.name}</Typography>
-            <Typography variant="h5">ID: {props.student.id}</Typography>
+            <Typography variant='h5'>Name: {props.student.name}</Typography>
+            <Typography variant='h5'>ID: {props.student.id}</Typography>
           </div>
         </Card>
         <Card className='min-h-fit my-8'>

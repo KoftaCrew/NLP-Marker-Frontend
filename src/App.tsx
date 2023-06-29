@@ -1,6 +1,5 @@
 import { AppBar, Container, CssBaseline, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
 import Home from './views/Home';
-import StudentsExam from './views/StudentsExam';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import logo from './assets/logo.png';
 import { useState } from 'react';
