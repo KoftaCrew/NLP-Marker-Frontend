@@ -73,14 +73,24 @@ const Login = () => {
 
       const { access, refresh } = response.data;
 
+      const userResponse = await axiosInstance.get('/auth/profile/', {
+        headers: {
+          Authorization: `Bearer ${access}`
+        }
+      });
+
+      /* eslint-disable camelcase */
+      const { first_name, last_name, email } = userResponse.data.results[0];
+
       setUser({
         username,
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'johndoe@example.com',
+        firstName: first_name,
+        lastName: last_name,
+        email,
         accessToken: access,
         refreshToken: refresh
       });
+      /* eslint-enable camelcase */
 
     } catch (error) {
       if (error instanceof AxiosError) {
