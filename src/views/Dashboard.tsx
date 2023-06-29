@@ -48,7 +48,7 @@ const Dashboard = () => {
   const [sharingDialogExam, setSharingDialogExam] = useState<ExamModel | null>(null);
 
   useEffect(() => {
-    setAppBarTitle(`Welcome ${user?.name ?? ''}`);
+    setAppBarTitle(`Welcome ${user?.firstName ?? ''} ${user?.lastName ?? ''}!`);
     setAppBarButtons([
       <Button
         color='inherit'

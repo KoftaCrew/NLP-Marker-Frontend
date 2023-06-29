@@ -1,12 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { User } from "../entities/User";
 import { UserContext } from "../store/UserContext";
 import When from "../components/When";
 import Login from "./Login";
 import Dashboard from "./Dashboard";
+import { setAuthorizationHeader } from "../services/AxiosService";
 
 const Home = () => {
-  const [user, setUser] = useState<User | null | undefined>(undefined);
+  const [user, setInternalUser] = useState<User | null | undefined>(undefined);
+
+  const setUser = useCallback((user: User | null) => {
+    setAuthorizationHeader(user?.accessToken ?? '');
+    setInternalUser(user);
+  }, []);
 
   useEffect(() => {
     if (user === undefined) {
@@ -28,7 +34,7 @@ const Home = () => {
       <When isTrue={user === null}>
         <Login />
       </When>
-      <When isTrue={user !== null}>
+      <When isTrue={user !== null && user !== undefined}>
         <Dashboard />
       </When>
     </UserContext.Provider>
