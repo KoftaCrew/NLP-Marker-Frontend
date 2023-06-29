@@ -31,6 +31,7 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import ShareIcon from '@mui/icons-material/Share';
+import HomeIcon from '@mui/icons-material/Home';
 import When from "../components/When";
 import { ExamModel } from "../entities/Exam";
 import StudentsAnswers from "./StudentsAnswers";
@@ -52,7 +53,20 @@ const Dashboard = () => {
     setAppBarButtons([
       <Button
         color='inherit'
+        startIcon={<HomeIcon />}
+        onClick={() => {
+          setExamId('');
+          setMode('idle');
+        }}
+      >
+        Home
+      </Button>,
+      <Button
+        color='inherit'
         startIcon={<LogoutIcon />}
+        sx={{
+          marginLeft: '2rem'
+        }}
         onClick={() => {
           setUser(null);
         }}
