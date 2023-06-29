@@ -27,6 +27,9 @@ const Home = () => {
     if (user) {
       setUser(JSON.parse(user));
     }
+    else {
+      setUser(null);
+    }
   }, []);
 
   return (
