@@ -1,107 +1,117 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { InsightsViewerProps } from "./InsightsViewerTypes";
-import { deepCopy } from "../../utils/Utils";
-import { ModelAnswerSegment } from "../../entities/ModelAnswerTypes";
+import { AnswerToken, ModelAnswerSegment } from "../../entities/ModelAnswerTypes";
+import { Question } from "../../entities/Question";
 
-const defaultBackgroundColor = "#b1dae7";
+const defaultBackgroundColor = '#b1dae7';
+const EmptySegmentBackgroundColor = '#e7b1b1';
+
+const EmptyToken : AnswerToken = {
+  token:'',
+  isSegment:false,
+  mappedSegments: [],
+  segmentIndex: 0
+};
 
 const bodyParser = (body: string, segments: ModelAnswerSegment[]) => {
   let last = 0;
-  let resSegments = [] as string[];
-  for (let char = 0; char < segments.length; ++char) {
-    if (last < segments[char].start) {
-      resSegments = [...resSegments, body.substring(last, segments[char].start)];
-      last = char;
+  let tokens : {token: string, isSegment: boolean}[] = [];
+  for (let index = 0; index < segments.length; ++index) {
+    if (last < segments[index].start) {
+      tokens = [...tokens, {token: body.substring(last, segments[index].start),
+        isSegment: false}];
+      last = index;
     }
-    resSegments = [...resSegments, body.substring(segments[char].start, segments[char].end)];
-    last = segments[char].end;
+    tokens = [...tokens,
+      {
+        token: body.substring(segments[index].start,
+          segments[index].end),
+        isSegment: true
+      }
+    ];
+    last = segments[index].end;
   }
   if (last != body.length) {
-    resSegments = [...resSegments, body.substring(last, body.length)];
+    tokens = [...tokens, {token: body.substring(last, body.length), isSegment: false}];
   }
-  return resSegments;
+  return tokens;
+};
+
+const Parser = (question: Question) => {
+
+  const studentSegments = question.studentAnswer?.segements? question.studentAnswer.segements:[];
+  const studentTokens = question.studentAnswer?
+    bodyParser(question.studentAnswer.body, studentSegments): [];
+
+  const modelSegments = question.modelAnswer?.segements? question.modelAnswer.segements:[];
+  const modelTokens = question.modelAnswer?
+    bodyParser(question.modelAnswer.body, modelSegments): [];
+
+  const modelSegmentsMapper :number[] = [];
+  modelTokens.map((modelToken, index) => (
+    modelToken.isSegment && modelSegmentsMapper.push(index)
+  ));
+
+  const tokenizedModel : AnswerToken[] = [];
+  const tokenizedStudent : AnswerToken[] = [];
+
+  const studentSegmentMapper = (index: number) => {
+    const unMappedSegments = question.segementsMap? question.segementsMap[index] : [];
+    const mappedSegments = unMappedSegments.map((index)=> (
+      index = modelSegmentsMapper[index]
+    ));
+    return mappedSegments;
+  };
+
+  let iterator = 0;
+  studentTokens.map((studentToken, index) => (
+    tokenizedStudent.push({
+      token: studentToken.token,
+      isSegment: studentToken.isSegment,
+      mappedSegments: studentToken.isSegment? studentSegmentMapper(iterator++) : [],
+      segmentIndex: index
+    })
+  ));
+
+  modelTokens.map((modelToken, index) => (
+    tokenizedModel.push({
+      token: modelToken.token,
+      isSegment: modelToken.isSegment,
+      mappedSegments: [],
+      segmentIndex: index
+    })
+  ));
+
+  tokenizedStudent.map((token, studentIndex) => (
+    token.mappedSegments.map((modelIndex) => (
+      tokenizedModel[modelIndex].mappedSegments.push(studentIndex)
+    ))
+  ));
+
+  return {tokenizedStudent:tokenizedStudent,
+    tokenizedModel:tokenizedModel};
 };
 
 const InsightsViewer = (props: InsightsViewerProps) => {
 
-  const studentSegments = deepCopy(props.question?.studentAnswer?.segements?
-    props.question.studentAnswer.segements: [])?.sort((a, b) => a.start - b.start);
 
-  const studentTokens = bodyParser(props.question?.studentAnswer? props.question.studentAnswer.body: '',
-    studentSegments? studentSegments:[]);
+  const tmp = Parser(props.question);
 
-  const modelSegments = deepCopy(props.question?.modelAnswer?.segements?
-    props.question.modelAnswer.segements: [])?.sort((a, b) => a.start - b.start);
-
-  const modelTokens = bodyParser(props.question?.modelAnswer? props.question.modelAnswer.body: '',
-    modelSegments? modelSegments:[]);
-
-  const segmentsMap = props.question.segementsMap? props.question.segementsMap : [];
-
-  const adjModel: number[][] = useMemo(() => {
-    const adjModel: number[][] = [];
-
-    for (let i = 0; i < modelTokens.length; i++) { //this is for javascript idiocy
-      adjModel.push([]);
-    }
+  const studentTokens = tmp.tokenizedStudent;
 
 
-    for (let i = 0; i < segmentsMap.length; i++) {
-      for (let j = 0; j < segmentsMap[i].length; j++) {
-        adjModel[segmentsMap[i][j]].push(i);
-      }
-    }
-    return adjModel;
-  }, [segmentsMap, modelTokens]);
+  const modelTokens = tmp.tokenizedModel;
 
 
-  //highlight related states
-  const [idx, setIdx] = useState(-1);
-  const [tokenType, setTokenType] = useState(-1);
+  const [selectedStudentToken, setSelectedStudentToken] = useState<AnswerToken>(EmptyToken);
+  const [selectedModelToken, setSelectedModelToken] = useState<AnswerToken>(EmptyToken);
 
-  const isHighlightedModel = useMemo(() => {
-    const newHighlightedModel: boolean[] =
-      Array(modelTokens.length).fill(false);
-    if (idx < 0) return newHighlightedModel;
-
-    if (tokenType === 1) {
-      newHighlightedModel[idx] = true;
-      return newHighlightedModel;
-    }
-    const x = segmentsMap[idx];
-    if (x == undefined) return newHighlightedModel;
-
-    for (let i = 0; i < x.length; i++) {
-      newHighlightedModel[x[i]] = true;
-    }
-    return newHighlightedModel;
-  }, [idx, tokenType]);
-
-
-  const isHighlightedStudent = useMemo(() => {
-    const newHighlightedModel: boolean[] =
-      Array(studentTokens.length).fill(false);
-
-    if (idx < 0) return newHighlightedModel;
-
-    if (tokenType == 0) {
-      newHighlightedModel[idx] = true;
-      return newHighlightedModel;
-    }
-    const x = adjModel[idx];
-    if (x == undefined) return newHighlightedModel;
-    for (let i = 0; i < x.length; i++) {
-      newHighlightedModel[x[i]] = true;
-    }
-
-    return newHighlightedModel;
-  }, [idx, tokenType]);
 
   const handleMouseLeave = () => {
-
-    setIdx(-1);
-    setTokenType(-1);
+    setSelectedStudentToken(EmptyToken);
+    setSelectedModelToken(EmptyToken);
   };
+
 
   return (
     <div className='bg-white w-full'>
@@ -117,35 +127,44 @@ const InsightsViewer = (props: InsightsViewerProps) => {
         <div className='m-2 p-2 h-52 overflow-y-auto bg-white
             rounded border-solid border-[1px] border-gray-500/25 shadow-md w-1/2'>
           {
-            studentTokens.map((token, index) => <span className=''
-              style={{
-                backgroundColor: isHighlightedStudent[index] ? defaultBackgroundColor : "white"
-              }}
-              onMouseEnter={() => {
-                setIdx(index);
-                setTokenType(0);
-              }}
-              onMouseLeave={() => handleMouseLeave()}>
-
-              <span>{token}</span>
-            </span>)
+            studentTokens.map((studentToken, index) =>
+              <span
+                style={{
+                  backgroundColor: studentToken.isSegment &&
+                (selectedStudentToken.segmentIndex == index ||
+                  selectedModelToken.mappedSegments.includes(studentToken.segmentIndex))
+                    ? (studentToken.mappedSegments.length > 0?
+                      defaultBackgroundColor : EmptySegmentBackgroundColor) : "white"
+                }}
+                onMouseEnter={() => {
+                  setSelectedStudentToken(studentToken);
+                }}
+                onMouseLeave={() => handleMouseLeave()}
+              >
+                {studentToken.token}
+              </span>)
           }
         </div>
 
         <div className='m-2 p-2 h-52 overflow-y-auto bg-white
             rounded border-solid border-[1px] border-gray-500/25 shadow-md w-1/2'>
           {
-            modelTokens.map((token, index) => <span
-              style={{
-                backgroundColor: isHighlightedModel[index] ? defaultBackgroundColor : "white"
-              }}
-              onMouseEnter={() => {
-                setIdx(index);
-                setTokenType(1);
-              }}
-              onMouseLeave={() => handleMouseLeave()}>
-              {token}
-            </span>)
+            modelTokens.map((modelToken, index) =>
+              <span
+                style={{
+                  backgroundColor: modelToken.isSegment &&
+                  (selectedModelToken.segmentIndex == index ||
+                    selectedStudentToken.mappedSegments.includes(modelToken.segmentIndex))
+                    ? (modelToken.mappedSegments.length > 0?
+                      defaultBackgroundColor : EmptySegmentBackgroundColor) : "white"
+                }}
+                onMouseEnter={() => {
+                  setSelectedModelToken(modelToken);
+                }}
+                onMouseLeave={() => handleMouseLeave()}
+              >
+                {modelToken.token}
+              </span>)
           }
         </div>
       </div>

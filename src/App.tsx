@@ -1,10 +1,11 @@
 import { AppBar, Container, CssBaseline, ThemeProvider, Toolbar, Typography, createTheme } from '@mui/material';
 import Home from './views/Home';
-import StudentsExam from './views/StudentExams';
+import StudentsExam from './views/StudentsExam';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import logo from './assets/logo.png';
 import { useState } from 'react';
 import { AppBarContext } from './store/AppBarContext';
+import StudentsExamEntry from './views/StudentExamEntry';
 
 const theme = createTheme({
   palette: {
@@ -51,7 +52,7 @@ function App() {
             <AppBarContext.Provider value={{ appBarTitle, setAppBarTitle, appBarButtons, setAppBarButtons }}>
               <Routes>
                 <Route index element={<Home />} />
-                <Route path='/student-exam/' element={<StudentsExam id='1'/>} />
+                <Route path='/student-exam/' element={<StudentsExamEntry id='1'/>} />
                 <Route path='*' element={<Navigate to='/' replace/>} />
               </Routes>
             </AppBarContext.Provider>

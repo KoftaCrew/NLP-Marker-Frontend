@@ -66,8 +66,16 @@ const StudentsAnswers = (props: { id: string, onClose: () => void }) => {
             body: 'model model model model',
             segements: [
               {
-                start:0,
+                start:1,
                 end:4
+              },
+              {
+                start: 9,
+                end: 11
+              },
+              {
+                start: 15,
+                end: 20
               }
             ]
           },
@@ -75,8 +83,12 @@ const StudentsAnswers = (props: { id: string, onClose: () => void }) => {
             body: 'ans ans ans ans ans ans',
             segements: [
               {
-                start:0,
+                start:1,
                 end:4
+              },
+              {
+                start: 9,
+                end: 11
               }
             ]
           },
@@ -88,8 +100,12 @@ const StudentsAnswers = (props: { id: string, onClose: () => void }) => {
             body: 'model model model model',
             segements: [
               {
-                start:0,
+                start:1,
                 end:4
+              },
+              {
+                start: 9,
+                end: 11
               }
             ]
           },
@@ -97,8 +113,12 @@ const StudentsAnswers = (props: { id: string, onClose: () => void }) => {
             body: 'ans ans ans ans ans ans',
             segements: [
               {
-                start:0,
+                start:1,
                 end:4
+              },
+              {
+                start: 9,
+                end: 11
               }
             ]
           },
@@ -110,8 +130,12 @@ const StudentsAnswers = (props: { id: string, onClose: () => void }) => {
             body: 'model model model model',
             segements: [
               {
-                start:0,
+                start:1,
                 end:4
+              },
+              {
+                start: 9,
+                end: 11
               }
             ]
           },
@@ -119,8 +143,12 @@ const StudentsAnswers = (props: { id: string, onClose: () => void }) => {
             body: 'ans ans ans ans ans ans',
             segements: [
               {
-                start:0,
+                start:1,
                 end:4
+              },
+              {
+                start: 9,
+                end: 11
               }
             ]
           },
@@ -132,8 +160,12 @@ const StudentsAnswers = (props: { id: string, onClose: () => void }) => {
             body: 'model model model model',
             segements: [
               {
-                start:0,
+                start:1,
                 end:4
+              },
+              {
+                start: 9,
+                end: 11
               }
             ]
           },
@@ -141,8 +173,12 @@ const StudentsAnswers = (props: { id: string, onClose: () => void }) => {
             body: 'ans ans ans ans ans ans',
             segements: [
               {
-                start:0,
+                start:1,
                 end:4
+              },
+              {
+                start: 9,
+                end: 11
               }
             ]
           },

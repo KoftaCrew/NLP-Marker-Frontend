@@ -9,3 +9,10 @@ export type ModelAnswer = {
   segements?: ModelAnswerSegment[];
   mode?: 'grade' | 'edit';
 }
+
+export type AnswerToken = {
+  token: string;
+  isSegment: boolean;
+  mappedSegments: number[];
+  segmentIndex: number;
+}
