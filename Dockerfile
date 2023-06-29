@@ -2,6 +2,8 @@ FROM node:18-alpine as build
 
 WORKDIR /app
 
+ENV REACT_APP_API_URL=https://backend.bravewave-3fb96535.northeurope.azurecontainerapps.io/
+
 COPY . .
 
 RUN npm ci
