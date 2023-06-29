@@ -1,14 +1,5 @@
+import { Question } from "../../entities/Question";
+
 export type InsightsViewerProps = {
-  studTokens: ListStudentTokens,
-  modelTokens: ListModelTokens,
-  adj: number[][],
-  modelInsights?: string[],
-  studentInsights?: string[],
-  totalGrade?: number,
-  modelGrade?: number[],
-  answerGrade?: number[],
+  question: Question,
 }
-
-export type ListStudentTokens =string[]
-
-export type ListModelTokens = string[]

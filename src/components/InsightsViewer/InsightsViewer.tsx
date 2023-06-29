@@ -1,27 +1,59 @@
 import { useMemo, useState } from "react";
 import { InsightsViewerProps } from "./InsightsViewerTypes";
-import CustomModal from "../CustomModal/CustomModal";
+import { deepCopy } from "../../utils/Utils";
+import { ModelAnswerSegment } from "../../entities/ModelAnswerTypes";
 
-const space = " ";
 const defaultBackgroundColor = "#b1dae7";
 
+const bodyParser = (body: string, segments: ModelAnswerSegment[]) => {
+  let last = 0;
+  let resSegments = [] as string[];
+  for (let char = 0; char < segments.length; ++char) {
+    if (last < segments[char].start) {
+      resSegments = [...resSegments, body.substring(last, segments[char].start)];
+      last = char;
+    }
+    resSegments = [...resSegments, body.substring(segments[char].start, segments[char].end)];
+    last = segments[char].end;
+  }
+  if (last != body.length) {
+    resSegments = [...resSegments, body.substring(last, body.length)];
+  }
+  return resSegments;
+};
 
 const InsightsViewer = (props: InsightsViewerProps) => {
+
+  const studentSegments = deepCopy(props.question?.studentAnswer?.segements?
+    props.question.studentAnswer.segements: [])?.sort((a, b) => a.start - b.start);
+
+  const studentTokens = bodyParser(props.question?.studentAnswer? props.question.studentAnswer.body: '',
+    studentSegments? studentSegments:[]);
+
+  const modelSegments = deepCopy(props.question?.modelAnswer?.segements?
+    props.question.modelAnswer.segements: [])?.sort((a, b) => a.start - b.start);
+
+  const modelTokens = bodyParser(props.question?.modelAnswer? props.question.modelAnswer.body: '',
+    modelSegments? modelSegments:[]);
+
+  const segmentsMap = props.question.segementsMap? props.question.segementsMap : [];
 
   const adjModel: number[][] = useMemo(() => {
     const adjModel: number[][] = [];
 
-    for (let i = 0; i < props.modelTokens.length; i++) { //this is for javascript idiocy
+    for (let i = 0; i < modelTokens.length; i++) { //this is for javascript idiocy
       adjModel.push([]);
     }
 
-    for (let i = 0; i < props.adj.length; i++) {
-      for (let j = 0; j < props.adj[i].length; j++) {
-        adjModel[props.adj[i][j]].push(i);
+
+    for (let i = 0; i < segmentsMap.length; i++) {
+      for (let j = 0; j < segmentsMap[i].length; j++) {
+        adjModel[segmentsMap[i][j]].push(i);
       }
     }
     return adjModel;
-  }, [props.adj, props.modelTokens]);
+  }, [segmentsMap, modelTokens]);
+
 
   //highlight related states
   const [idx, setIdx] = useState(-1);
@@ -29,14 +61,14 @@ const InsightsViewer = (props: InsightsViewerProps) => {
 
   const isHighlightedModel = useMemo(() => {
     const newHighlightedModel: boolean[] =
-      Array(props.modelTokens.length).fill(false);
+      Array(modelTokens.length).fill(false);
     if (idx < 0) return newHighlightedModel;
 
     if (tokenType === 1) {
       newHighlightedModel[idx] = true;
       return newHighlightedModel;
     }
-    const x = props.adj[idx];
+    const x = segmentsMap[idx];
     if (x == undefined) return newHighlightedModel;
 
     for (let i = 0; i < x.length; i++) {
@@ -48,7 +80,7 @@ const InsightsViewer = (props: InsightsViewerProps) => {
 
   const isHighlightedStudent = useMemo(() => {
     const newHighlightedModel: boolean[] =
-      Array(props.studTokens.length).fill(false);
+      Array(studentTokens.length).fill(false);
 
     if (idx < 0) return newHighlightedModel;
 
@@ -71,118 +103,53 @@ const InsightsViewer = (props: InsightsViewerProps) => {
     setTokenType(-1);
   };
 
-  //modal related states
-  const [modalTitle, setModalTitle] = useState("");
-  const [modalContent, setModalContent] = useState("");
-  const [modalGrading, setModalGrading] = useState("");
-
-  const [openStud, setOpenStud] = useState(false);
-  const [openModel, setOpenModel] = useState(false);
-
-  const handleOpen = (key: string, index: number) => {
-    key === "first" ? setOpenStud(true) : setOpenModel(true);
-    let modalContent = "";
-    if (key === "first") {
-      if (props.studentInsights === undefined) {
-        modalContent += "No Insights available";
-      } else {
-        modalContent += props.studentInsights[index];
-      }
-      if (props.answerGrade === undefined) {
-        setModalGrading("No Answer Grade available");
-      }
-      else {
-        setModalGrading(props.answerGrade[index].toString());
-      }
-    } else {
-      if (props.modelInsights === undefined) {
-        modalContent += "No Insights available";
-      } else {
-        modalContent += props.modelInsights[index];
-      }
-      if (props.modelGrade === undefined) {
-        setModalGrading("No Model Grade available");
-      } else {
-        setModalGrading(props.modelGrade[index].toString());
-      }
-    }
-    setModalContent(modalContent);
-  };
-
-  const handleClose = () => {
-    setOpenStud(false);
-    setOpenModel(false);
-    setModalContent("");
-  };
-
-  const testClick = (key: string, item: string, index: number) => {
-    setModalTitle(item);
-    handleOpen(key, index);
-  };
-
   return (
-    <>
-      <CustomModal key='first'
-        open={openStud !== openModel} handleClose={handleClose}
-        title={modalTitle} content={modalContent} grading={modalGrading} />
-      <div className='bg-gray-300 w-full'>
-        <div className='text-center '>Insights Viewer</div>
-        <div className='flex justify-evenly text-center mb-2'>
-          <span className='w-1/2 '>
-            <span className='bg-white px-4 py-2 rounded-lg border border-black'>
+    <div className='bg-white w-full'>
+      <div className='flex justify-evenly text-center mb-2'>
+        <div className='font-semibold w-1/2'>
               Student Answer
-            </span>
-          </span>
-          <span className='w-1/2'>
-            <span className='bg-white px-4 py-2 rounded-lg border border-black'>
-              Model Answer
-            </span>
-          </span>
         </div>
-        <div className='flex justify-evenly'>
-          <span className='m-2 p-2 bg-white rounded border-solid border-2 border-black w-1/2 text-center'>
-            {
-              props.studTokens.map((item, index) => <span className=''
-                onMouseDown={() => {
-                  testClick("first", item, index);
-                }}
-                style={{
-                  backgroundColor: isHighlightedStudent[index] ? defaultBackgroundColor : "white"
-                }}
-                onMouseEnter={() => {
-                  setIdx(index);
-                  setTokenType(0);
-                }}
-                onMouseLeave={() => handleMouseLeave()}>
-
-                <span>{item}</span>
-                <span style={{ backgroundColor: "white" }}>{space}</span>
-              </span>)
-            }
-          </span>
-
-          <span className='m-2 p-2 bg-white rounded border-solid border-2 border-black w-1/2 text-center'>
-            {
-              props.modelTokens.map((item, index) => <span
-                onMouseDown={() => {
-                  testClick("second", item, index);
-                }}
-                style={{
-                  backgroundColor: isHighlightedModel[index] ? defaultBackgroundColor : "white"
-                }}
-                onMouseEnter={() => {
-                  setIdx(index);
-                  setTokenType(1);
-                }}
-                onMouseLeave={() => handleMouseLeave()}>
-                {item}
-                <span style={{ backgroundColor: "white" }}>{space}</span>
-              </span>)
-            }
-          </span>
+        <div className='font-semibold w-1/2'>
+              Model Answer
         </div>
       </div>
-    </>
+      <div className='flex justify-evenly'>
+        <div className='m-2 p-2 h-52 overflow-y-auto bg-white
+            rounded border-solid border-[1px] border-gray-500/25 shadow-md w-1/2'>
+          {
+            studentTokens.map((token, index) => <span className=''
+              style={{
+                backgroundColor: isHighlightedStudent[index] ? defaultBackgroundColor : "white"
+              }}
+              onMouseEnter={() => {
+                setIdx(index);
+                setTokenType(0);
+              }}
+              onMouseLeave={() => handleMouseLeave()}>
+
+              <span>{token}</span>
+            </span>)
+          }
+        </div>
+
+        <div className='m-2 p-2 h-52 overflow-y-auto bg-white
+            rounded border-solid border-[1px] border-gray-500/25 shadow-md w-1/2'>
+          {
+            modelTokens.map((token, index) => <span
+              style={{
+                backgroundColor: isHighlightedModel[index] ? defaultBackgroundColor : "white"
+              }}
+              onMouseEnter={() => {
+                setIdx(index);
+                setTokenType(1);
+              }}
+              onMouseLeave={() => handleMouseLeave()}>
+              {token}
+            </span>)
+          }
+        </div>
+      </div>
+    </div>
   );
 };
 

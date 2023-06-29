@@ -1,62 +1,212 @@
-import { useMemo, useState } from 'react';
-import { StudentAnswer, StudentAnswersProps } from '../entities/StudentAnswersTypes';
+import { useEffect, useState } from 'react';
+import { Student } from '../entities/StudentAnswersTypes';
 import ListItemButton from '@mui/material/ListItemButton';
 import List from '@mui/material/List';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Person4Icon from '@mui/icons-material/Person4';
+import InsightsViewer from '../components/InsightsViewer/InsightsViewer';
+import { Card, Container, Divider, LinearProgress, Typography } from '@mui/material';
+import When from '../components/When';
+import { Question } from '../entities/Question';
 
 
-const StudentsAnswers = (props: StudentAnswersProps) => {
-  //this should be a map of student name to InsightView
-  // TODO: Handle answermap from props.examId
-  const answerMap: StudentAnswer[] = []; // props.studentAnswers;
+const StudentsAnswers = (props: { id: string, onClose: () => void }) => {
+  
 
-  const [idx, setIdx] = useState(0);
+  const [selectedStudent, setSelectedStudent] = useState(0);
+  const [selectedStudentName, setSelectedStudentName] = useState('');
+  const [students, setStudents] = useState<Student[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const showStudentAnswer = useMemo(() => {
-    if (idx < 0) return null;
-    return answerMap[idx];
-  }, [idx]);
+  useEffect(() => {
+
+    const fetchExam = async () => {
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setStudents([
+        {
+          id: '20190001',
+          name: 'Kofta'
+        },
+        {
+          id: '20190002',
+          name: 'Karim'
+        },
+        {
+          id: '20190003',
+          name: 'Flasha'
+        },
+        {
+          id: '20190004',
+          name: 'Dova'
+        },
+        {
+          id: '20190005',
+          name: 'Bingo'
+        }
+      ]);
+      setSelectedStudentName('Kofta');
+    };
+    setLoading(true);
+
+    fetchExam().then(() => (setLoading(false)));
+  }, []);
+
+  useEffect(() => {
+
+    const fetchExam = async () => {
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setQuestions([
+        {
+          title: 'test test test test',
+          modelAnswer: {
+            body: 'model model model model',
+            segements: [
+              {
+                start:0,
+                end:4
+              }
+            ]
+          },
+          studentAnswer: {
+            body: 'ans ans ans ans ans ans',
+            segements: [
+              {
+                start:0,
+                end:4
+              }
+            ]
+          },
+          segementsMap: [[0, 1], [0]]
+        },
+        {
+          title: 'test test test test',
+          modelAnswer: {
+            body: 'model model model model',
+            segements: [
+              {
+                start:0,
+                end:4
+              }
+            ]
+          },
+          studentAnswer: {
+            body: 'ans ans ans ans ans ans',
+            segements: [
+              {
+                start:0,
+                end:4
+              }
+            ]
+          },
+          segementsMap: [[0, 1], [0]]
+        },
+        {
+          title: 'test test test test',
+          modelAnswer: {
+            body: 'model model model model',
+            segements: [
+              {
+                start:0,
+                end:4
+              }
+            ]
+          },
+          studentAnswer: {
+            body: 'ans ans ans ans ans ans',
+            segements: [
+              {
+                start:0,
+                end:4
+              }
+            ]
+          },
+          segementsMap: [[0, 1], [0]]
+        },
+        {
+          title: 'test test test test',
+          modelAnswer: {
+            body: 'model model model model',
+            segements: [
+              {
+                start:0,
+                end:4
+              }
+            ]
+          },
+          studentAnswer: {
+            body: 'ans ans ans ans ans ans',
+            segements: [
+              {
+                start:0,
+                end:4
+              }
+            ]
+          },
+          segementsMap: [[0, 1], [0]]
+        }
+      ]);
+    };
+    setLoading(true);
+
+    fetchExam().then(() => (setLoading(false)));
+  }, []);
+
+
   return (
 
-    <div className='flex w-full h-screen '>
-      {/* <div className='w-1/3 h-screen text-center bg-gray-300 p-2 m-2'>
-        <h1>Students</h1>
-        {answerMap.map((item, index) => {
-          return (
-            <div className='flex justify-between '>
-              <span className='text-center w-full bg-white m-2 p-2 rounded-lg'
-                onMouseDown={() => { setIdx(index); }}
-              >{item.Name}</span>
-            </div>
-          );
-        })}
-      </div> */}
-      <div className='w-[720px] border-r-2 h-screen text-center border-e-2 p-2 m-2 overflow-hidden'>
-        <List component='nav' aria-label='main mailbox folders'>
-          {answerMap.map((item, index) => {
-            return (
-              <ListItemButton className='border'
-                style={{ }}
-                selected={idx === index}
-                onClick={() => setIdx(index)}
-              >
-                <ListItemIcon>
-                  <Person4Icon />
-                </ListItemIcon>
-                <ListItemText primary={item.Name} />
-              </ListItemButton>
-            );
-          })}
-        </List>
-      </div>
-      <div className='w-full h-screen  text-center bg-gray-300 p-2 m-2'>
-        <h1>each students answers</h1>
-        <span className=''>{showStudentAnswer?.Name}</span>
-        <div className='bg-white rounded-lg  p-2 w-full' >{
-          showStudentAnswer ? showStudentAnswer.Answer : answerMap[idx].Name}</div>
-      </div>
+    <div className='flex w-full h-full '>
+      <When isTrue={loading}>
+        <Container>
+          <LinearProgress />
+        </Container>
+      </When>
+      <When isTrue={!loading}>
+        <div className='w-96 h-full overflow-y-auto border-r-2 p-2'>
+          <List component='nav' aria-label='main mailbox folders'>
+            {students.map((student, index) => {
+              return (
+                <ListItemButton className='border'
+                  style={{ }}
+                  selected={selectedStudent === index}
+                  onClick={() => {setSelectedStudent(index); setSelectedStudentName(student.name);}}
+                >
+                  <ListItemIcon>
+                    <Person4Icon />
+                  </ListItemIcon>
+                  <ListItemText primary={student.name} />
+                </ListItemButton>
+              );
+            })}
+          </List>
+        </div>
+        <div className='bg-gray-200/5 w-full h-full overflow-y-auto'>
+          <Container className='p-4 mt-4'>
+            <Typography variant='h4' className='pb-4'>{selectedStudentName}</Typography>
+            <Card className='p-4 flex flex-col gap-4'>
+              {questions.map((question, index) => (
+                <div>
+                  <div className='mb-2'>
+                    <Typography>{index + 1}. {question.title}</Typography>
+                  </div>
+                  <div className='rounded-lg  p-2 w-full'>
+                    <InsightsViewer
+                      question={question}/>
+                  </div>
+                  <div className='my-4'>
+                    {index + 1 < questions.length &&
+                    <Divider/>
+                    }
+                  </div>
+                </div>
+              ))}
+            </Card>
+          </Container>
+        </div>
+      </When>
     </div>
 
   );

@@ -5,6 +5,13 @@ export type StudentAnswersProps = {
 };
 
 export type StudentAnswer = {
-  Name: string;
-  Answer: ReactComponentElement<InsightsViewer>;
+  name: string;
+  answers: {
+    questionTitle: string,
+    insights: ReactComponentElement<InsightsViewer>}[];
+}
+
+export type Student = {
+  name: string;
+  id: string;
 }
