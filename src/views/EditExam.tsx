@@ -260,7 +260,7 @@ const EditExam = (props: { id: number, onClose: () => void }) => {
           <div className='mt-4 flex flex-col gap-8'>
             <Typography
               variant='body2'
-              className='text-gray-500'
+              className='text-red-500'
             >
               Note: You must fill all the questions and model answers to save.
             </Typography>
