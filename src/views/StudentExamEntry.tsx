@@ -1,10 +1,12 @@
+/* eslint-disable camelcase */
 import { LoadingButton } from "@mui/lab";
 import { Box, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Student } from "../entities/StudentAnswersTypes";
 import StudentsExam from "./StudentsExam";
+import { unauthenticatedAxiosInstance } from "../services/AxiosService";
 
-const StudentsExamEntry = (props: { id: string }) => {
+const StudentsExamEntry = (props: { id: number }) => {
 
 
   const [loading, setLoading] = useState(false);
@@ -12,6 +14,7 @@ const StudentsExamEntry = (props: { id: string }) => {
   const [examName, setExamName] = useState('');
   const [examView, setExamView] = useState(false);
   const [student, setStudent] = useState<Student>({name:'', id:''});
+  const [studentSessionId, setStudentSessionId] = useState(-1);
 
   useEffect(()=>{
     setExamName('English Exam');
@@ -21,17 +24,25 @@ const StudentsExamEntry = (props: { id: string }) => {
     event.preventDefault();
     setLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    setStudent({
+    const newStudent = {
       name: (event.target as HTMLFormElement).studentName.value,
       id: (event.target as HTMLFormElement).studentID.value
+    };
+    setStudent(newStudent);
+    const response = await unauthenticatedAxiosInstance.post('/student-answer/student/', {
+      exam: props.id,
+      student_id: newStudent.id,
+      student_name: newStudent.name
     });
+    setStudentSessionId(response.data.id);
+
     setLoading(false);
     setExamView(true);
   };
 
   return (
     <>
-      {examView? <StudentsExam id={props.id} student={student}/> :
+      {examView? <StudentsExam studentSessionId={studentSessionId} examId={props.id} student={student}/> :
         <div className='w-full h-full flex justify-center content-center flex-wrap'>
           <Box
             component='form'

@@ -12,7 +12,7 @@ export interface Exam extends ExamModel{
 }
 
 export interface StudentExam {
-  id: string;
+  id: number;
   name: string;
   questions: StudentQuestion[];
 }

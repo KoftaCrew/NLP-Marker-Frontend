@@ -52,7 +52,7 @@ function App() {
             <AppBarContext.Provider value={{ appBarTitle, setAppBarTitle, appBarButtons, setAppBarButtons }}>
               <Routes>
                 <Route index element={<Home />} />
-                <Route path='/student-exam/' element={<StudentsExamEntry id='1'/>} />
+                <Route path='/student-exam/' element={<StudentsExamEntry id={20}/>} />
                 <Route path='/re/' element={<StudentsAnswers id={1}/>} />
                 <Route path='*' element={<Navigate to='/' replace/>} />
               </Routes>

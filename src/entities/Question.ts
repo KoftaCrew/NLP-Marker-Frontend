@@ -9,5 +9,6 @@ export interface Question {
 
 export interface StudentQuestion {
   title: string;
+  id: number;
   studentAnswer: string;
 }
