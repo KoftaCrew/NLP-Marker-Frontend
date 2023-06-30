@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable camelcase */
 import { Exam } from "./Exam";
 
 export const ExamSerializer = (exam: any) => {
@@ -20,4 +22,25 @@ export const ExamSerializer = (exam: any) => {
     })))
   };
   return serializedExam;
+};
+
+
+export const ExamDeserializer = (exam: Exam) => {
+  const deserializedExam = {
+    name: exam.name,
+    mode: exam.mode === 'editing'? 0 : 1,
+    exam_questions: exam.questions.map((question) => ({
+      question: question.title,
+      model_answer: {
+        text: question.modelAnswer.body,
+        model_answer_key_phrases: question.modelAnswer.segements?.map((segement)=> ({
+          start_index: segement.start,
+          end_index: segement.end,
+          grade: segement.grade
+        }))
+      }
+    }))
+  };
+
+  return deserializedExam;
 };

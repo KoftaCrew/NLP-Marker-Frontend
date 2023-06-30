@@ -27,7 +27,8 @@ import CheckIcon from '@mui/icons-material/Check';
 import When from "../components/When";
 import { AppBarContext } from "../store/AppBarContext";
 import axiosInstance from "../services/AxiosService";
-import { ExamSerializer } from "../entities/ExamSerializer";
+import { ExamDeserializer, ExamSerializer } from "../entities/ExamSerializer";
+import { LoadingButton } from "@mui/lab";
 
 const EmptyExam : Exam = {
   id: -1,
@@ -41,6 +42,7 @@ const EditExam = (props: { id: number, onClose: () => void }) => {
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteDialogIndex, setDeleteDialogIndex] = useState<number>(-1);
+  const [saveLoading, setSaveLoading] = useState(false);
   const [exam, setExam] = useState<Exam>({
     id: -1,
     mode: 'editing',
@@ -163,6 +165,17 @@ const EditExam = (props: { id: number, onClose: () => void }) => {
     setExamName(e.target.value);
   };
 
+  const handleSaveOnClick = async () => {
+    setSaveLoading(true);
+    if (props.id === -1) {
+      await axiosInstance.post('/exam/', ExamDeserializer(exam));
+    } else {
+      await axiosInstance.patch(`/exam/${exam.id}/`, ExamDeserializer(exam));
+    }
+    setSaveLoading(false);
+    props.onClose();
+  };
+
   return (
     <div className='bg-gray-200/5'>
       <Container className='p-4 mt-4'>
@@ -248,14 +261,15 @@ const EditExam = (props: { id: number, onClose: () => void }) => {
               >
                 Cancel
               </Button>
-              <Button
+              <LoadingButton
                 className='w-32'
                 color='primary'
                 variant='contained'
-                onClick={props.onClose}
+                onClick={handleSaveOnClick}
+                loading={saveLoading}
               >
                 Save
-              </Button>
+              </LoadingButton>
             </div>
           </div>
         </When>
