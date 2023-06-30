@@ -3,7 +3,7 @@ import { UserContext } from "../store/UserContext";
 import { Box, TextField, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { AppBarContext } from "../store/AppBarContext";
-import axiosInstance, { setAuthorizationHeader } from "../services/AxiosService";
+import { setAuthorizationHeader, unauthenticatedAxiosInstance } from "../services/AxiosService";
 import { AxiosError } from "axios";
 
 
@@ -37,7 +37,7 @@ const Login = () => {
 
       /* eslint-disable camelcase */
       try {
-        await axiosInstance.post('/auth/sign-up/', {
+        await unauthenticatedAxiosInstance.post('/auth/sign-up/', {
           username,
           password,
           confirm_password: password,
@@ -66,14 +66,14 @@ const Login = () => {
     }
 
     try {
-      const response = await axiosInstance.post('/auth/login/', {
+      const response = await unauthenticatedAxiosInstance.post('/auth/login/', {
         username,
         password
       });
 
       const { access, refresh } = response.data;
 
-      const userResponse = await axiosInstance.get('/auth/profile/', {
+      const userResponse = await unauthenticatedAxiosInstance.get('/auth/profile/', {
         headers: {
           Authorization: `Bearer ${access}`
         }

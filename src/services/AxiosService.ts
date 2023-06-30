@@ -44,10 +44,15 @@ axiosInstance.interceptors.response.use(
         .catch(() => {
           setAuthorizationHeader("");
           window.location.reload();
+          return Promise.reject(error);
         });
     }
     return Promise.reject(error);
   }
 );
+
+export const unauthenticatedAxiosInstance = axios.create({
+  baseURL: process.env.REACT_APP_API_URL
+});
 
 export default axiosInstance;
