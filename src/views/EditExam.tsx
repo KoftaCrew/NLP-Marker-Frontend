@@ -43,6 +43,7 @@ const EditExam = (props: { id: number, onClose: () => void }) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteDialogIndex, setDeleteDialogIndex] = useState<number>(-1);
   const [saveLoading, setSaveLoading] = useState(false);
+  const [disableSaving, setDisableSaving] = useState(false);
   const [exam, setExam] = useState<Exam>({
     id: -1,
     mode: 'editing',
@@ -55,13 +56,16 @@ const EditExam = (props: { id: number, onClose: () => void }) => {
   const questions = useMemo(() => exam.questions, [exam]);
   const setQuestions = useCallback((questions: Question[]) => {
     setExam({ ...exam, questions });
+    let isFilledTexts = true;
+    questions.map((question) =>
+      (isFilledTexts = isFilledTexts && !!question.title && !!question.modelAnswer.body));
+    setDisableSaving(!isFilledTexts);
   }, [exam]);
 
   const examName = useMemo(() => exam.name, [exam]);
   const setExamName = useCallback((name: string) => {
     setExam({ ...exam, name });
   }, [exam]);
-
 
 
   const { setAppBarTitle } = useContext(AppBarContext);
@@ -252,6 +256,14 @@ const EditExam = (props: { id: number, onClose: () => void }) => {
                 </ButtonGroup>
               </div>
             ))}
+          </div>
+          <div className='mt-4 flex flex-col gap-8'>
+            <Typography
+              variant='body2'
+              className='text-gray-500'
+            >
+              Note: You must fill all the questions and model answers to save.
+            </Typography>
             <div className='flex justify-end px-14 pb-12 gap-2'>
               <Button
                 className='w-32'
@@ -267,6 +279,7 @@ const EditExam = (props: { id: number, onClose: () => void }) => {
                 variant='contained'
                 onClick={handleSaveOnClick}
                 loading={saveLoading}
+                disabled={disableSaving}
               >
                 Save
               </LoadingButton>
