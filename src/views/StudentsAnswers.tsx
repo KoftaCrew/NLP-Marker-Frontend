@@ -60,7 +60,9 @@ const StudentsAnswers = (props: { id: number }) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setQuestions([
         {
-          title: 'test test test test',
+          title: `two lines question two lines question two lines question two lines question
+            two lines question two lines question two lines question two lines question
+            two lines question two lines question two lines question two lines question`,
           modelAnswer: {
             body: 'model model model model',
             segements: [
@@ -224,8 +226,11 @@ const StudentsAnswers = (props: { id: number }) => {
             <Card className='p-4 flex flex-col gap-4'>
               {questions.map((question, index) => (
                 <div>
-                  <div className='mb-2'>
-                    <Typography>{index + 1}. {question.title}</Typography>
+                  <div className='mb-2 flex justify-between'>
+                    <Typography><div className='flex gap-1'><div>{index + 1}.</div> {question.title}</div></Typography>
+                    <div className='border-2 h-fit border-gray-500 rounded-lg p-1 mx-4'>
+                      <Typography variant='h6'>10/10</Typography>
+                    </div>
                   </div>
                   <div className='rounded-lg  p-2 w-full'>
                     <InsightsViewer

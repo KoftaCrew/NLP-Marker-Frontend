@@ -257,14 +257,16 @@ const EditExam = (props: { id: number, onClose: () => void }) => {
               </div>
             ))}
           </div>
-          <div className='mt-4 flex flex-col gap-8'>
-            <Typography
-              variant='body2'
-              className='text-red-500'
-            >
+          <div className='mt-4 flex flex-col'>
+            <When isTrue={disableSaving}>
+              <Typography
+                variant='body2'
+                className='text-red-500'
+              >
               Note: You must fill all the questions and model answers to save.
-            </Typography>
-            <div className='flex justify-end px-14 pb-12 gap-2'>
+              </Typography>
+            </When>
+            <div className='flex justify-end px-14 pb-12 gap-2 my-4'>
               <Button
                 className='w-32'
                 color='primary'

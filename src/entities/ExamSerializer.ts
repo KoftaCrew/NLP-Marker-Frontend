@@ -11,7 +11,7 @@ export const ExamSerializer = (exam: any) => {
       title: question.question,
       modelAnswer: {
         body: question.model_answer.text,
-        mode: 'edit',
+        mode: 'grade',
         segements: question.model_answer.model_answer_key_phrases.map((segement : any) => ({
           start: segement.start_index,
           end: segement.end_index,

@@ -5,6 +5,7 @@ import logo from './assets/logo.png';
 import { useState } from 'react';
 import { AppBarContext } from './store/AppBarContext';
 import StudentsExamEntry from './views/StudentExamEntry';
+import StudentsAnswers from './views/StudentsAnswers';
 
 const theme = createTheme({
   palette: {
@@ -52,6 +53,7 @@ function App() {
               <Routes>
                 <Route index element={<Home />} />
                 <Route path='/student-exam/' element={<StudentsExamEntry id='1'/>} />
+                <Route path='/re/' element={<StudentsAnswers id={1}/>} />
                 <Route path='*' element={<Navigate to='/' replace/>} />
               </Routes>
             </AppBarContext.Provider>
