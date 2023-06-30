@@ -223,18 +223,19 @@ const StudentsAnswers = (props: { id: number }) => {
         <div className='bg-gray-200/5 w-full h-full overflow-y-auto'>
           <Container className='p-4 mt-4'>
             <Typography variant='h4' className='pb-4'>{selectedStudentName}</Typography>
-            <Card className='p-4 flex flex-col gap-4'>
+            <Card className='p-4 py-8 flex flex-col gap-4'>
               {questions.map((question, index) => (
                 <div>
-                  <div className='mb-2 flex justify-between'>
-                    <Typography><div className='flex gap-1'><div>{index + 1}.</div> {question.title}</div></Typography>
-                    <div className='border-2 h-fit border-gray-500 rounded-lg p-1 mx-4'>
-                      <Typography variant='h6'>10/10</Typography>
-                    </div>
-                  </div>
+                  <Typography><div className='mb-1 mx-2 flex gap-1'>
+                    <div>{index + 1}.</div> {question.title}</div>
+                  </Typography>
+
                   <div className='rounded-lg  p-2 w-full'>
                     <InsightsViewer
                       question={question}/>
+                  </div>
+                  <div className='h-fit p-1 mx-4 flex justify-end'>
+                    <Typography variant='h6'><div className='font-bold'>Grade: 10/10</div></Typography>
                   </div>
                   <div className='my-4'>
                     {index + 1 < questions.length &&

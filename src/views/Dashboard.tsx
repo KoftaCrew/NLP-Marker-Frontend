@@ -105,9 +105,10 @@ const Dashboard = () => {
     setMode(exam.mode);
   };
 
-  const handleDeleteExam = (exam: ExamModel) => () => {
-    // TODO: Delete exam
-    exam;
+  const handleDeleteExam = (exam: ExamModel) => async () => {
+    setLoading(true);
+    await axiosInstance.delete(`/exam/${exam.id}`);
+    fetchExams();
 
     setExamId(-1);
     setAnchorEl(null);
