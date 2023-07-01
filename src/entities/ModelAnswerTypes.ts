@@ -6,7 +6,7 @@ export type ModelAnswerSegment = {
 
 export type ModelAnswer = {
   body: string;
-  segements?: ModelAnswerSegment[];
+  segments?: ModelAnswerSegment[];
   mode?: 'grade' | 'edit';
 }
 

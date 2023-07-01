@@ -90,9 +90,9 @@ const EditExam = (props: { id: number, onClose: () => void }) => {
     fetchExam().then(() => (setLoading(false)));
   }, []);
 
-  const setSegments = (index: number) => (segements: ModelAnswerSegment[]) => {
+  const setSegments = (index: number) => (segments: ModelAnswerSegment[]) => {
     const newQuestions = [...questions];
-    newQuestions[index].modelAnswer.segements = segements;
+    newQuestions[index].modelAnswer.segments = segments;
     setQuestions(newQuestions);
   };
 
@@ -234,7 +234,7 @@ const EditExam = (props: { id: number, onClose: () => void }) => {
                   <div className='my-8'>
                     <ModelAnswerSegmenter rows={8}
                       modelAnswer={question.modelAnswer.body} setModelAnswer={setModelAnswer(index)}
-                      segments={question.modelAnswer.segements} setSegments={setSegments(index)}
+                      segments={question.modelAnswer.segments} setSegments={setSegments(index)}
                       mode={question.modelAnswer.mode} setMode={setMode(index)} />
                   </div>
                 </Card>

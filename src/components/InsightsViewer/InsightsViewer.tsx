@@ -39,11 +39,11 @@ const bodyParser = (body: string, segments: ModelAnswerSegment[]) => {
 
 const Parser = (question: Question) => {
 
-  const studentSegments = question.studentAnswer?.segements? question.studentAnswer.segements:[];
+  const studentSegments = question.studentAnswer?.segments? question.studentAnswer.segments:[];
   const studentTokens = question.studentAnswer?
     bodyParser(question.studentAnswer.body, studentSegments): [];
 
-  const modelSegments = question.modelAnswer?.segements? question.modelAnswer.segements:[];
+  const modelSegments = question.modelAnswer?.segments? question.modelAnswer.segments:[];
   const modelTokens = question.modelAnswer?
     bodyParser(question.modelAnswer.body, modelSegments): [];
 
@@ -56,7 +56,7 @@ const Parser = (question: Question) => {
   const tokenizedStudent : AnswerToken[] = [];
 
   const studentSegmentMapper = (index: number) => {
-    const unMappedSegments = question.segementsMap? question.segementsMap[index] : [];
+    const unMappedSegments = question.segmentsMap? question.segmentsMap[index] : [];
     const mappedSegments = unMappedSegments.map((index)=> (
       index = modelSegmentsMapper[index]
     ));
