@@ -5,8 +5,10 @@ import { useEffect, useState } from "react";
 import { Student } from "../entities/StudentAnswersTypes";
 import StudentsExam from "./StudentsExam";
 import { unauthenticatedAxiosInstance } from "../services/AxiosService";
+import { useParams } from "react-router-dom";
+import { AxiosError } from "axios";
 
-const StudentsExamEntry = (props: { id: number }) => {
+const StudentsExamEntry = () => {
 
 
   const [loading, setLoading] = useState(false);
@@ -16,8 +18,15 @@ const StudentsExamEntry = (props: { id: number }) => {
   const [student, setStudent] = useState<Student>({name:'', id:''});
   const [studentSessionId, setStudentSessionId] = useState(-1);
 
-  useEffect(()=>{
-    setExamName('English Exam');
+  const params = useParams();
+  const examId = Number(params.examId);
+
+  useEffect(()=> {
+    const fetchExam = async () => {
+      const response = await unauthenticatedAxiosInstance.get(`/exam/card/${examId}/`);
+      setExamName(response.data.name);
+    };
+    fetchExam();
   }, []);
 
   const handleOnSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -29,20 +38,29 @@ const StudentsExamEntry = (props: { id: number }) => {
       id: (event.target as HTMLFormElement).studentID.value
     };
     setStudent(newStudent);
-    const response = await unauthenticatedAxiosInstance.post('/student-answer/student/', {
-      exam: props.id,
-      student_id: newStudent.id,
-      student_name: newStudent.name
-    });
-    setStudentSessionId(response.data.id);
-
+    try{
+      const response = await unauthenticatedAxiosInstance.post('/student-answer/student/', {
+        exam: examId,
+        student_id: newStudent.id,
+        student_name: newStudent.name
+      });
+      setStudentSessionId(response.data.id);
+      setExamView(true);
+    }catch (error) {
+      if (error instanceof AxiosError) {
+        if (!error.response) {
+          error.message && setError(error.message);
+        } else {
+          setError(error.response.data.detail ?? error.message);
+        }
+      }
+    }
     setLoading(false);
-    setExamView(true);
   };
 
   return (
     <>
-      {examView? <StudentsExam studentSessionId={studentSessionId} examId={props.id} student={student}/> :
+      {examView? <StudentsExam studentSessionId={studentSessionId} examId={examId} student={student}/> :
         <div className='w-full h-full flex justify-center content-center flex-wrap'>
           <Box
             component='form'
