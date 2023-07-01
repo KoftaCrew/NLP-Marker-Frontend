@@ -190,6 +190,7 @@ const CustomInput = ({ value, rows, segments: segmentsState, setSegments }: Cust
           </div>
         }
         followCursor
+        arrow
       >
         <span
           key={i}

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { InsightsViewerProps } from "./InsightsViewerTypes";
 import { AnswerToken, ModelAnswerSegment } from "../../entities/ModelAnswerTypes";
 import { Question } from "../../entities/Question";
+import { Tooltip } from "@mui/material";
 
 const defaultBackgroundColor = '#b1dae7';
 const EmptySegmentBackgroundColor = '#e7b1b1';
@@ -127,22 +128,28 @@ const InsightsViewer = (props: InsightsViewerProps) => {
         <div className='m-2 p-2 h-52 overflow-y-auto bg-white
             rounded border-solid border-[1px] border-gray-500/25 shadow-md w-1/2'>
           {
-            studentTokens.map((studentToken, index) =>
-              <span
-                style={{
-                  backgroundColor: studentToken.isSegment &&
+            studentTokens.map((studentToken, index) =>(
+              <Tooltip
+                title='test'
+                followCursor
+                arrow
+                disableHoverListener={!studentToken.isSegment}>
+                <span
+                  style={{
+                    backgroundColor: studentToken.isSegment &&
                 (selectedStudentToken.segmentIndex == index ||
                   selectedModelToken.mappedSegments.includes(studentToken.segmentIndex))
-                    ? (studentToken.mappedSegments.length > 0?
-                      defaultBackgroundColor : EmptySegmentBackgroundColor) : "white"
-                }}
-                onMouseEnter={() => {
-                  setSelectedStudentToken(studentToken);
-                }}
-                onMouseLeave={() => handleMouseLeave()}
-              >
-                {studentToken.token}
-              </span>)
+                      ? (studentToken.mappedSegments.length > 0?
+                        defaultBackgroundColor : EmptySegmentBackgroundColor) : "white"
+                  }}
+                  onMouseEnter={() => {
+                    setSelectedStudentToken(studentToken);
+                  }}
+                  onMouseLeave={() => handleMouseLeave()}
+                >
+                  {studentToken.token}
+                </span>
+              </Tooltip>))
           }
         </div>
 
@@ -150,21 +157,27 @@ const InsightsViewer = (props: InsightsViewerProps) => {
             rounded border-solid border-[1px] border-gray-500/25 shadow-md w-1/2'>
           {
             modelTokens.map((modelToken, index) =>
-              <span
-                style={{
-                  backgroundColor: modelToken.isSegment &&
+              <Tooltip
+                title='test'
+                followCursor
+                arrow
+                disableHoverListener={!modelToken.isSegment}>
+                <span
+                  style={{
+                    backgroundColor: modelToken.isSegment &&
                   (selectedModelToken.segmentIndex == index ||
                     selectedStudentToken.mappedSegments.includes(modelToken.segmentIndex))
-                    ? (modelToken.mappedSegments.length > 0?
-                      defaultBackgroundColor : EmptySegmentBackgroundColor) : "white"
-                }}
-                onMouseEnter={() => {
-                  setSelectedModelToken(modelToken);
-                }}
-                onMouseLeave={() => handleMouseLeave()}
-              >
-                {modelToken.token}
-              </span>)
+                      ? (modelToken.mappedSegments.length > 0?
+                        defaultBackgroundColor : EmptySegmentBackgroundColor) : "white"
+                  }}
+                  onMouseEnter={() => {
+                    setSelectedModelToken(modelToken);
+                  }}
+                  onMouseLeave={() => handleMouseLeave()}
+                >
+                  {modelToken.token}
+                </span>
+              </Tooltip>)
           }
         </div>
       </div>

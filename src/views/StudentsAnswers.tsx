@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { Student } from '../entities/StudentAnswersTypes';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -9,55 +10,40 @@ import InsightsViewer from '../components/InsightsViewer/InsightsViewer';
 import { Card, Container, Divider, LinearProgress, Typography } from '@mui/material';
 import When from '../components/When';
 import { Question } from '../entities/Question';
+import axiosInstance from '../services/AxiosService';
 
 
 const StudentsAnswers = (props: { id: number }) => {
 
-  const [selectedStudent, setSelectedStudent] = useState(0);
-  const [selectedStudentName, setSelectedStudentName] = useState('');
+  const [selectedStudentIndex, setSelectedStudentIndex] = useState(0);
   const [students, setStudents] = useState<Student[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
+  const [examLoading, setExamLoading] = useState(true);
 
   useEffect(() => {
 
-    const fetchExam = async () => {
+    const fetchStudents = async () => {
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setStudents([
-        {
-          id: '20190001',
-          name: 'Kofta'
-        },
-        {
-          id: '20190002',
-          name: 'Karim'
-        },
-        {
-          id: '20190003',
-          name: 'Flasha'
-        },
-        {
-          id: '20190004',
-          name: 'Dova'
-        },
-        {
-          id: '20190005',
-          name: 'Bingo'
-        }
-      ]);
-      setSelectedStudentName('Kofta');
+      const response = await axiosInstance.get('/student-answer/student/', {params: {exam:props.id}});
+      const fetchedStudents = response.data.map((student: any)=>({
+        id: student.student_id,
+        name: student.student_name
+      }));
+      setStudents(fetchedStudents);
     };
     setLoading(true);
 
-    fetchExam().then(() => (setLoading(false)));
+    fetchStudents().then(() => (setLoading(false)));
   }, []);
 
   useEffect(() => {
 
     const fetchExam = async () => {
 
+      setExamLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));
+
       setQuestions([
         {
           title: `two lines question two lines question two lines question two lines question
@@ -187,10 +173,8 @@ const StudentsAnswers = (props: { id: number }) => {
         }
       ]);
     };
-    setLoading(true);
-
-    fetchExam().then(() => (setLoading(false)));
-  }, []);
+    fetchExam().then(() => (setExamLoading(false)));
+  }, [selectedStudentIndex]);
 
 
   return (
@@ -208,8 +192,8 @@ const StudentsAnswers = (props: { id: number }) => {
               return (
                 <ListItemButton className='border'
                   style={{ }}
-                  selected={selectedStudent === index}
-                  onClick={() => {setSelectedStudent(index); setSelectedStudentName(student.name);}}
+                  selected={selectedStudentIndex === index}
+                  onClick={() => {setSelectedStudentIndex(index);}}
                 >
                   <ListItemIcon>
                     <Person4Icon />
@@ -222,29 +206,40 @@ const StudentsAnswers = (props: { id: number }) => {
         </div>
         <div className='bg-gray-200/5 w-full h-full overflow-y-auto'>
           <Container className='p-4 mt-4'>
-            <Typography variant='h4' className='pb-4'>{selectedStudentName}</Typography>
-            <Card className='p-4 py-8 flex flex-col gap-4'>
-              {questions.map((question, index) => (
-                <div>
-                  <Typography><div className='mb-1 mx-2 flex gap-1'>
-                    <div>{index + 1}.</div> {question.title}</div>
-                  </Typography>
+            {
+              students.length > 0 &&
+              <div className='flex justify-between px-1'>
+                <Typography variant='h4' className='pb-4'>Name: {students[selectedStudentIndex].name}</Typography>
+                <Typography variant='h4' className='pb-4'>ID: {students[selectedStudentIndex].id}</Typography>
+              </div>
+            }
+            <When isTrue={examLoading}>
+              <LinearProgress />
+            </When>
+            <When isTrue={!examLoading}>
+              <Card className='p-4 py-8 flex flex-col gap-4'>
+                {questions.map((question, index) => (
+                  <div>
+                    <Typography><div className='mb-1 mx-2 flex gap-1'>
+                      <div>{index + 1}.</div> {question.title}</div>
+                    </Typography>
 
-                  <div className='rounded-lg  p-2 w-full'>
-                    <InsightsViewer
-                      question={question}/>
-                  </div>
-                  <div className='h-fit p-1 mx-4 flex justify-end'>
-                    <Typography variant='h6'><div className='font-bold'>Grade: 10/10</div></Typography>
-                  </div>
-                  <div className='my-4'>
-                    {index + 1 < questions.length &&
+                    <div className='rounded-lg  p-2 w-full'>
+                      <InsightsViewer
+                        question={question}/>
+                    </div>
+                    <div className='h-fit p-1 mx-4 flex justify-end'>
+                      <Typography variant='h6'><div className='font-bold'>Grade: 10/10</div></Typography>
+                    </div>
+                    <div className='my-4'>
+                      {index + 1 < questions.length &&
                     <Divider/>
-                    }
+                      }
+                    </div>
                   </div>
-                </div>
-              ))}
-            </Card>
+                ))}
+              </Card>
+            </When>
           </Container>
         </div>
       </When>
