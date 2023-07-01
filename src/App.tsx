@@ -53,7 +53,6 @@ function App() {
               <Routes>
                 <Route index element={<Home />} />
                 <Route path='/student-exam/:examId' element={<StudentsExamEntry/>} />
-                <Route path='/re/' element={<StudentsAnswers id={1}/>} />
                 <Route path='*' element={<Navigate to='/' replace/>} />
               </Routes>
             </AppBarContext.Provider>
