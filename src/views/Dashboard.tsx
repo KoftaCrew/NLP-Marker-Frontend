@@ -140,176 +140,178 @@ const Dashboard = () => {
 
   return (<>
     <When isTrue={mode === 'idle'}>
-      <Drawer
-        variant='permanent'
-        sx={{
-          width: 240,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            boxSizing: 'border-box',
+      <div className="flex">
+        <Drawer
+          variant='permanent'
+          sx={{
             width: 240,
-            backgroundColor: 'primary.main',
-            color: 'primary.contrastText',
-            '.MuiListItemIcon-root': {
-              color: 'primary.contrastText'
-            },
-            '.Mui-selected': {
-              backgroundColor: 'primary.dark',
-              '&:hover': {
-                backgroundColor: 'primary.dark'
+            flexShrink: 0,
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: 240,
+              backgroundColor: 'primary.main',
+              color: 'primary.contrastText',
+              '.MuiListItemIcon-root': {
+                color: 'primary.contrastText'
+              },
+              '.Mui-selected': {
+                backgroundColor: 'primary.dark',
+                '&:hover': {
+                  backgroundColor: 'primary.dark'
+                }
               }
             }
-          }
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
-          <List>
-            <ListItem disablePadding>
-              <ListItemButton
-                onClick={() => {
-                  setExamId(-1);
-                  setMode('editing');
-                }}
+          }}
+        >
+          <Toolbar />
+          <Box sx={{ overflow: 'auto' }}>
+            <List>
+              <ListItem disablePadding>
+                <ListItemButton
+                  onClick={() => {
+                    setExamId(-1);
+                    setMode('editing');
+                  }}
+                >
+                  <ListItemIcon>
+                    <NoteAddIcon />
+                  </ListItemIcon>
+                  <ListItemText primary='New Exam' />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton selected>
+                  <ListItemIcon>
+                    <FolderOpenIcon />
+                  </ListItemIcon>
+                  <ListItemText primary='Open Exam' />
+                </ListItemButton>
+              </ListItem>
+            </List>
+          </Box>
+        </Drawer>
+        <div className='bg-gray-200/10 h-full flex-grow'>
+          <Container>
+            <When isTrue={loading}>
+              <LinearProgress />
+            </When>
+            <When isTrue={!loading}>
+              <Box
+                className='flex flex-row flex-wrap gap-5 w-full h-full pt-10'
               >
-                <ListItemIcon>
-                  <NoteAddIcon />
-                </ListItemIcon>
-                <ListItemText primary='New Exam' />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton selected>
-                <ListItemIcon>
-                  <FolderOpenIcon />
-                </ListItemIcon>
-                <ListItemText primary='Open Exam' />
-              </ListItemButton>
-            </ListItem>
-          </List>
-        </Box>
-      </Drawer>
-      <div className='bg-gray-200/10 h-full'>
-        <Container>
-          <When isTrue={loading}>
-            <LinearProgress />
-          </When>
-          <When isTrue={!loading}>
-            <Box
-              className='flex flex-row flex-wrap gap-5 w-full h-full pt-10'
-            >
-              {exams.map((exam) => (
-                <>
-                  <Card
-                    key={exam.id}
-                  >
-                    <CardActionArea
-                      id={`exam-card-${exam.id}`}
-                      aria-controls={`exam-menu-${exam.id}`}
-                      onClick={() => {
-                        setExamId(exam.id);
-                        setAnchorEl(document.getElementById(`exam-card-${exam.id}`));
-                      }}
+                {exams.map((exam) => (
+                  <>
+                    <Card
+                      key={exam.id}
                     >
-                      <CardContent
-                        className='w-64 h-64 flex flex-col gap-5'
+                      <CardActionArea
+                        id={`exam-card-${exam.id}`}
+                        aria-controls={`exam-menu-${exam.id}`}
+                        onClick={() => {
+                          setExamId(exam.id);
+                          setAnchorEl(document.getElementById(`exam-card-${exam.id}`));
+                        }}
                       >
-                        <Typography variant='h5'>{exam.name}</Typography>
-                        <Typography
-                          variant='body1'
-                          className='flex-grow'
+                        <CardContent
+                          className='w-64 h-64 flex flex-col gap-5'
                         >
-                          {exam.description}
-                        </Typography>
-                        <Typography variant='body2' className='text-gray-500'>
-                          {exam.mode === 'editing' ? 'Editing' : 'Results'} Mode
-                        </Typography>
-                      </CardContent>
-                    </CardActionArea>
-                  </Card>
-                  <Menu
-                    key={exam.id + '-menu'}
-                    id={`exam-menu-${exam.id}`}
-                    aria-labelledby={`exam-card-${exam.id}`}
-                    anchorOrigin={{
-                      vertical: 'center',
-                      horizontal: 'right'
-                    }}
-                    transformOrigin={{
-                      vertical: 'center',
-                      horizontal: 'left'
-                    }}
-                    anchorEl={anchorEl}
-                    open={exam.id === examId}
-                    onClose={() => setExamId(-1)}
-                  >
-                    <MenuItem
-                      onClick={handleOpenExam(exam)}
+                          <Typography variant='h5'>{exam.name}</Typography>
+                          <Typography
+                            variant='body1'
+                            className='flex-grow'
+                          >
+                            {exam.description}
+                          </Typography>
+                          <Typography variant='body2' className='text-gray-500'>
+                            {exam.mode === 'editing' ? 'Editing' : 'Results'} Mode
+                          </Typography>
+                        </CardContent>
+                      </CardActionArea>
+                    </Card>
+                    <Menu
+                      key={exam.id + '-menu'}
+                      id={`exam-menu-${exam.id}`}
+                      aria-labelledby={`exam-card-${exam.id}`}
+                      anchorOrigin={{
+                        vertical: 'center',
+                        horizontal: 'right'
+                      }}
+                      transformOrigin={{
+                        vertical: 'center',
+                        horizontal: 'left'
+                      }}
+                      anchorEl={anchorEl}
+                      open={exam.id === examId}
+                      onClose={() => setExamId(-1)}
                     >
-                      <ListItemIcon>
-                        <FileOpenIcon />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={exam.mode === 'editing' ? 'Edit' : 'View Results'}
-                      />
-                    </MenuItem>
-                    <MenuItem
-                      onClick={handleDeleteExam(exam)}
-                    >
-                      <ListItemIcon>
-                        <DeleteIcon />
-                      </ListItemIcon>
-                      <ListItemText primary='Delete' />
-                    </MenuItem>
-                    <MenuItem
-                      onClick={handleShareToStudents(exam)}
-                    >
-                      <ListItemIcon>
-                        <ShareIcon />
-                      </ListItemIcon>
-                      <ListItemText primary={exam.mode === 'editing' ? 'Start sharing to students' : 'Copy URL'} />
-                    </MenuItem>
-                  </Menu>
-                </>
-              ))}
-            </Box>
-          </When>
-        </Container>
-      </div>
-      <Dialog
-        open={sharingDialogOpen}
-        onClose={handleSharingDialogClose}
-      >
-        <DialogTitle>Share to students</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            <Typography
-              variant='body1'
-            >
+                      <MenuItem
+                        onClick={handleOpenExam(exam)}
+                      >
+                        <ListItemIcon>
+                          <FileOpenIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={exam.mode === 'editing' ? 'Edit' : 'View Results'}
+                        />
+                      </MenuItem>
+                      <MenuItem
+                        onClick={handleDeleteExam(exam)}
+                      >
+                        <ListItemIcon>
+                          <DeleteIcon />
+                        </ListItemIcon>
+                        <ListItemText primary='Delete' />
+                      </MenuItem>
+                      <MenuItem
+                        onClick={handleShareToStudents(exam)}
+                      >
+                        <ListItemIcon>
+                          <ShareIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={exam.mode === 'editing' ? 'Start sharing to students' : 'Copy URL'} />
+                      </MenuItem>
+                    </Menu>
+                  </>
+                ))}
+              </Box>
+            </When>
+          </Container>
+        </div>
+        <Dialog
+          open={sharingDialogOpen}
+          onClose={handleSharingDialogClose}
+        >
+          <DialogTitle>Share to students</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <Typography
+                variant='body1'
+              >
               You are about to make this exam sharable to students, this will make the exam unmodifiable.
               Are you sure you want to continue?
-            </Typography>
-            <Typography
-              variant='body2'
-              className='text-gray-500'
-            >
+              </Typography>
+              <Typography
+                variant='body2'
+                className='text-gray-500'
+              >
               Note: You can copy exam URL via the dashboard.
-            </Typography>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleSharingDialogClose}
-          >
+              </Typography>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleSharingDialogClose}
+            >
             Cancel
-          </Button>
-          <Button
-            onClick={() => sharingDialogExam && handleSharingAccept(sharingDialogExam)}
-          >
+            </Button>
+            <Button
+              onClick={() => sharingDialogExam && handleSharingAccept(sharingDialogExam)}
+            >
             Accept
-          </Button>
-        </DialogActions>
-      </Dialog>
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
     </When>
     <When isTrue={mode === 'editing'}>
       <EditExam
