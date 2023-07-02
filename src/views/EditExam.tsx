@@ -27,7 +27,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import When from "../components/When";
 import { AppBarContext } from "../store/AppBarContext";
 import axiosInstance from "../services/AxiosService";
-import { ExamDeserializer, ExamSerializer } from "../entities/ExamSerializer";
+import { ExamDeserializer, ExamSerializer } from "../serializers/ExamSerializer";
 import { LoadingButton } from "@mui/lab";
 
 const EmptyExam : Exam = {

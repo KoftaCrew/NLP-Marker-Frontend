@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable camelcase */
-import { Exam } from "./Exam";
+import { Exam } from "../entities/Exam";
 
 export const ExamSerializer = (exam: any) => {
   const serializedExam : Exam = {
