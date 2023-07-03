@@ -51,7 +51,7 @@ const StudentsAnswers = (props: { id: number }) => {
             two lines question two lines question two lines question two lines question`,
           modelAnswer: {
             body: 'model model model model',
-            segements: [
+            segments: [
               {
                 start:1,
                 end:4
@@ -68,7 +68,7 @@ const StudentsAnswers = (props: { id: number }) => {
           },
           studentAnswer: {
             body: 'ans ans ans ans ans ans',
-            segements: [
+            segments: [
               {
                 start:1,
                 end:4
@@ -79,13 +79,13 @@ const StudentsAnswers = (props: { id: number }) => {
               }
             ]
           },
-          segementsMap: [[0, 1], [0]]
+          segmentsMap: [[0, 1], [0]]
         },
         {
           title: 'test test test test',
           modelAnswer: {
             body: 'model model model model',
-            segements: [
+            segments: [
               {
                 start:1,
                 end:4
@@ -98,7 +98,7 @@ const StudentsAnswers = (props: { id: number }) => {
           },
           studentAnswer: {
             body: 'ans ans ans ans ans ans',
-            segements: [
+            segments: [
               {
                 start:1,
                 end:4
@@ -109,13 +109,13 @@ const StudentsAnswers = (props: { id: number }) => {
               }
             ]
           },
-          segementsMap: [[0, 1], [0]]
+          segmentsMap: [[0, 1], [0]]
         },
         {
           title: 'test test test test',
           modelAnswer: {
             body: 'model model model model',
-            segements: [
+            segments: [
               {
                 start:1,
                 end:4
@@ -128,7 +128,7 @@ const StudentsAnswers = (props: { id: number }) => {
           },
           studentAnswer: {
             body: 'ans ans ans ans ans ans',
-            segements: [
+            segments: [
               {
                 start:1,
                 end:4
@@ -139,13 +139,13 @@ const StudentsAnswers = (props: { id: number }) => {
               }
             ]
           },
-          segementsMap: [[0, 1], [0]]
+          segmentsMap: [[0, 1], [0]]
         },
         {
           title: 'test test test test',
           modelAnswer: {
             body: 'model model model model',
-            segements: [
+            segments: [
               {
                 start:1,
                 end:4
@@ -158,7 +158,7 @@ const StudentsAnswers = (props: { id: number }) => {
           },
           studentAnswer: {
             body: 'ans ans ans ans ans ans',
-            segements: [
+            segments: [
               {
                 start:1,
                 end:4
@@ -169,7 +169,7 @@ const StudentsAnswers = (props: { id: number }) => {
               }
             ]
           },
-          segementsMap: [[0, 1], [0]]
+          segmentsMap: [[0, 1], [0]]
         }
       ]);
     };

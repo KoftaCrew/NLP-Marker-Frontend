@@ -37,6 +37,7 @@ import { ExamModel } from "../entities/Exam";
 import StudentsAnswers from "./StudentsAnswers";
 import EditExam from "./EditExam";
 import axiosInstance from "../services/AxiosService";
+import { ExamCardSerializer, ExamModeDeserializer } from "../entities/ExamSerializer";
 
 const Dashboard = () => {
   const { user, setUser } = useContext(UserContext);
@@ -48,6 +49,8 @@ const Dashboard = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [sharingDialogOpen, setSharingDialogOpen] = useState(false);
   const [sharingDialogExam, setSharingDialogExam] = useState<ExamModel | null>(null);
+  const [stopSharingDialogOpen, setStopSharingDialogOpen] = useState(false);
+  const [stopSharingDialogExam, setStopSharingDialogExam] = useState<ExamModel | null>(null);
 
   useEffect(() => {
     setAppBarTitle(`Welcome ${user?.firstName ?? ''} ${user?.lastName ?? ''}!`);
@@ -83,24 +86,39 @@ const Dashboard = () => {
     setLoading(true);
 
     const exams: ExamModel[] = (
-      await axiosInstance.get('/exam/')
+      await axiosInstance.get('/exam/card/')
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ).data.map((exam: any) => ({
-      id: exam.id,
-      name: exam.name,
-      description: exam.description,
-      mode: exam.mode === 0 ? 'editing' : 'results'
-    }));
+    ).data.map((exam: any) => ExamCardSerializer(exam));
 
     setExams(exams);
     setLoading(false);
   }, []);
 
   useEffect(() => {
+    if (examId !== -1) {
+      setAnchorEl(document.getElementById(`exam-card-${examId}`));
+    }
+  }, [examId, exams]);
+
+  const [fetchInterval, setFetchInterval] = useState<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
     fetchExams();
+    setFetchInterval(setInterval(fetchExams, 10000));
+
+    return () => {
+      if (fetchInterval) {
+        clearInterval(fetchInterval);
+      }
+    };
   }, [fetchExams, user]);
 
-  const handleOpenExam = (exam: ExamModel) => () => {
+  const handleOpenExam = (exam: ExamModel) => async () => {
+    if (exam.mode === 'answering' || exam.mode === 'grading') {
+      handleStopSharing(exam);
+      return;
+    }
+
     setExamId(exam.id);
     setMode(exam.mode);
   };
@@ -119,8 +137,7 @@ const Dashboard = () => {
       setSharingDialogOpen(true);
       setSharingDialogExam(exam);
     } else {
-      // TODO: Copy exam URL
-      navigator.clipboard.writeText(`${window.location.origin}/student-exam?id=${exam.id}`);
+      navigator.clipboard.writeText(`${window.location.origin}/student-exam/${exam.id}`);
     }
     setExamId(-1);
     setAnchorEl(null);
@@ -131,11 +148,45 @@ const Dashboard = () => {
     setSharingDialogExam(null);
   };
 
-  const handleSharingAccept = (exam: ExamModel) => {
-    // TODO: Share exam
-    exam;
+  const handleSharingAccept = async (exam: ExamModel) => {
+    await axiosInstance.patch(`/exam/card/${exam.id}/`, {
+      mode: ExamModeDeserializer('answering')
+    });
 
     handleSharingDialogClose();
+    fetchExams();
+  };
+
+  const handleStopSharing = (exam: ExamModel) => {
+    setStopSharingDialogOpen(true);
+    setStopSharingDialogExam(exam);
+    setExamId(-1);
+    setAnchorEl(null);
+  };
+
+  const handleStopSharingDialogClose = () => {
+    setStopSharingDialogOpen(false);
+    setStopSharingDialogExam(null);
+  };
+
+  const handleStopSharingAccept = async (exam: ExamModel) => {
+    await axiosInstance.patch(`/exam/card/${exam.id}/`, {
+      mode: ExamModeDeserializer('answering')
+    });
+
+    handleStopSharingDialogClose();
+    fetchExams();
+  };
+
+  const primaryActionTextFromMode = (mode: ExamModel['mode']) => {
+    switch (mode) {
+    case 'editing':
+      return 'Edit';
+    case 'results':
+      return 'View Results';
+    case 'answering':
+      return 'Stop sharing';
+    }
   };
 
   return (<>
@@ -209,9 +260,12 @@ const Dashboard = () => {
                         aria-controls={`exam-menu-${exam.id}`}
                         onClick={() => {
                           setExamId(exam.id);
-                          setAnchorEl(document.getElementById(`exam-card-${exam.id}`));
-                        }}
-                      >
+                          }}
+                        disabled={exam.mode === 'grading'}
+                      sx={exam.mode === 'grading' ? {
+                        backgroundColor: 'grey.300'
+                      } : undefined}
+                    >
                         <CardContent
                           className='w-64 h-64 flex flex-col gap-5'
                         >
@@ -223,7 +277,7 @@ const Dashboard = () => {
                             {exam.description}
                           </Typography>
                           <Typography variant='body2' className='text-gray-500'>
-                            {exam.mode === 'editing' ? 'Editing' : 'Results'} Mode
+                            {exam.mode.charAt(0).toUpperCase() + exam.mode.slice(1)} Mode
                           </Typography>
                         </CardContent>
                       </CardActionArea>
@@ -251,12 +305,13 @@ const Dashboard = () => {
                           <FileOpenIcon />
                         </ListItemIcon>
                         <ListItemText
-                          primary={exam.mode === 'editing' ? 'Edit' : 'View Results'}
+                          primary={primaryActionTextFromMode(exam.mode)}
                         />
                       </MenuItem>
                       <MenuItem
                         onClick={handleDeleteExam(exam)}
-                      >
+                        disabled={exam.mode === 'answering'}
+                    >
                         <ListItemIcon>
                           <DeleteIcon />
                         </ListItemIcon>
@@ -264,11 +319,12 @@ const Dashboard = () => {
                       </MenuItem>
                       <MenuItem
                         onClick={handleShareToStudents(exam)}
-                      >
+                        disabled={exam.mode === 'results'}
+                    >
                         <ListItemIcon>
                           <ShareIcon />
                         </ListItemIcon>
-                        <ListItemText primary={exam.mode === 'editing' ? 'Start sharing to students' : 'Copy URL'} />
+                        <ListItemText primary={exam.mode !== 'editing' ? 'Copy URL' : 'Start sharing to students'} />
                       </MenuItem>
                     </Menu>
                   </>
@@ -312,6 +368,34 @@ const Dashboard = () => {
           </DialogActions>
         </Dialog>
       </div>
+      <Dialog
+        open={stopSharingDialogOpen}
+        onClose={handleStopSharingDialogClose}
+      >
+        <DialogTitle>Stop sharing to students</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <Typography
+              variant='body1'
+            >
+              You are about to stop sharing this exam to students, no students will be able to answer this exam anymore.
+              Are you sure you want to continue?
+            </Typography>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleStopSharingDialogClose}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => stopSharingDialogExam && handleStopSharingAccept(stopSharingDialogExam)}
+          >
+            Accept
+          </Button>
+        </DialogActions>
+      </Dialog>
     </When>
     <When isTrue={mode === 'editing'}>
       <EditExam

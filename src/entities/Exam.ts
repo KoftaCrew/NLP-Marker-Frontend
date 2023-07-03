@@ -4,7 +4,7 @@ export interface ExamModel {
   id: number;
   name: string;
   description?: string;
-  mode: 'results' | 'editing';
+  mode: 'results' | 'editing' | 'answering' | 'grading';
 }
 
 export interface Exam extends ExamModel{
