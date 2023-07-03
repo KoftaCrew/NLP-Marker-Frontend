@@ -266,7 +266,7 @@ const CustomInput = ({ value, rows, segments: segmentsState, setSegments }: Cust
         <DialogContent>
           <DialogContentText>
             <p>Set assigned marks for this segment.</p>
-            {segments && gradeDialogOpen !== -1 &&
+            {segments && gradeDialogOpen >= 0 && gradeDialogOpen < segments.length &&
               <p className='font-bold'>
                 {value.substring(segments[gradeDialogOpen].start, segments[gradeDialogOpen].end)}
               </p>
