@@ -37,7 +37,7 @@ import { ExamModel } from "../entities/Exam";
 import StudentsAnswers from "./StudentsAnswers";
 import EditExam from "./EditExam";
 import axiosInstance from "../services/AxiosService";
-import { ExamCardSerializer, ExamModeDeserializer } from "../entities/ExamSerializer";
+import { ExamCardSerializer, ExamModeDeserializer } from "../serializers/ExamSerializer";
 
 const Dashboard = () => {
   const { user, setUser } = useContext(UserContext);
@@ -260,12 +260,12 @@ const Dashboard = () => {
                         aria-controls={`exam-menu-${exam.id}`}
                         onClick={() => {
                           setExamId(exam.id);
-                          }}
+                        }}
                         disabled={exam.mode === 'grading'}
-                      sx={exam.mode === 'grading' ? {
-                        backgroundColor: 'grey.300'
-                      } : undefined}
-                    >
+                        sx={exam.mode === 'grading' ? {
+                          backgroundColor: 'grey.300'
+                        } : undefined}
+                      >
                         <CardContent
                           className='w-64 h-64 flex flex-col gap-5'
                         >
@@ -311,7 +311,7 @@ const Dashboard = () => {
                       <MenuItem
                         onClick={handleDeleteExam(exam)}
                         disabled={exam.mode === 'answering'}
-                    >
+                      >
                         <ListItemIcon>
                           <DeleteIcon />
                         </ListItemIcon>
@@ -320,7 +320,7 @@ const Dashboard = () => {
                       <MenuItem
                         onClick={handleShareToStudents(exam)}
                         disabled={exam.mode === 'results'}
-                    >
+                      >
                         <ListItemIcon>
                           <ShareIcon />
                         </ListItemIcon>
