@@ -291,6 +291,7 @@ const CustomInput = ({ value, rows, segments: segmentsState, setSegments }: Cust
           </Button>
           <Button
             onClick={handleGradeDialogClose(parseInt(dialogGrade))}
+            disabled={dialogGrade !== '' && parseInt(dialogGrade) < 0}
           >
             Set Marks
           </Button>
