@@ -37,7 +37,7 @@ import { ExamModel } from "../entities/Exam";
 import StudentsAnswers from "./StudentsAnswers";
 import EditExam from "./EditExam";
 import axiosInstance from "../services/AxiosService";
-import { ExamCardSerializer, ExamModeDeserializer } from "../entities/ExamSerializer";
+import { ExamCardSerializer, ExamModeDeserializer } from "../serializers/ExamSerializer";
 
 const Dashboard = () => {
   const { user, setUser } = useContext(UserContext);
@@ -170,9 +170,7 @@ const Dashboard = () => {
   };
 
   const handleStopSharingAccept = async (exam: ExamModel) => {
-    await axiosInstance.patch(`/exam/card/${exam.id}/`, {
-      mode: ExamModeDeserializer('answering')
-    });
+    await axiosInstance.patch(`/grade/${exam.id}/`);
 
     handleStopSharingDialogClose();
     fetchExams();
@@ -243,94 +241,90 @@ const Dashboard = () => {
         </Drawer>
         <div className='bg-gray-200/10 h-full flex-grow'>
           <Container>
-            <When isTrue={loading}>
-              <LinearProgress />
-            </When>
-            <When isTrue={!loading}>
-              <Box
-                className='flex flex-row flex-wrap gap-5 w-full h-full pt-10'
-              >
-                {exams.map((exam) => (
-                  <>
-                    <Card
-                      key={exam.id}
-                    >
-                      <CardActionArea
-                        id={`exam-card-${exam.id}`}
-                        aria-controls={`exam-menu-${exam.id}`}
-                        onClick={() => {
-                          setExamId(exam.id);
-                          }}
-                        disabled={exam.mode === 'grading'}
+            <LinearProgress sx={{ visibility: `${loading ? "visible" : "hidden"}` }}/>
+            <Box
+              className='flex flex-row flex-wrap gap-5 w-full h-full pt-10'
+            >
+              {exams.map((exam) => (
+                <>
+                  <Card
+                    key={exam.id}
+                  >
+                    <CardActionArea
+                      id={`exam-card-${exam.id}`}
+                      aria-controls={`exam-menu-${exam.id}`}
+                      onClick={() => {
+                        setExamId(exam.id);
+                      }}
+                      disabled={exam.mode === 'grading'}
                       sx={exam.mode === 'grading' ? {
                         backgroundColor: 'grey.300'
                       } : undefined}
                     >
-                        <CardContent
-                          className='w-64 h-64 flex flex-col gap-5'
-                        >
-                          <Typography variant='h5'>{exam.name}</Typography>
-                          <Typography
-                            variant='body1'
-                            className='flex-grow'
-                          >
-                            {exam.description}
-                          </Typography>
-                          <Typography variant='body2' className='text-gray-500'>
-                            {exam.mode.charAt(0).toUpperCase() + exam.mode.slice(1)} Mode
-                          </Typography>
-                        </CardContent>
-                      </CardActionArea>
-                    </Card>
-                    <Menu
-                      key={exam.id + '-menu'}
-                      id={`exam-menu-${exam.id}`}
-                      aria-labelledby={`exam-card-${exam.id}`}
-                      anchorOrigin={{
-                        vertical: 'center',
-                        horizontal: 'right'
-                      }}
-                      transformOrigin={{
-                        vertical: 'center',
-                        horizontal: 'left'
-                      }}
-                      anchorEl={anchorEl}
-                      open={exam.id === examId}
-                      onClose={() => setExamId(-1)}
-                    >
-                      <MenuItem
-                        onClick={handleOpenExam(exam)}
+                      <CardContent
+                        className='w-64 h-64 flex flex-col gap-5'
                       >
-                        <ListItemIcon>
-                          <FileOpenIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={primaryActionTextFromMode(exam.mode)}
-                        />
-                      </MenuItem>
-                      <MenuItem
-                        onClick={handleDeleteExam(exam)}
-                        disabled={exam.mode === 'answering'}
+                        <Typography variant='h5'>{exam.name}</Typography>
+                        <Typography
+                          variant='body1'
+                          className='flex-grow'
+                        >
+                          {exam.description}
+                        </Typography>
+                        <Typography variant='body2' className='text-gray-500'>
+                          {exam.mode.charAt(0).toUpperCase() + exam.mode.slice(1)} Mode
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                  </Card>
+                  <Menu
+                    key={exam.id + '-menu'}
+                    id={`exam-menu-${exam.id}`}
+                    aria-labelledby={`exam-card-${exam.id}`}
+                    anchorOrigin={{
+                      vertical: 'center',
+                      horizontal: 'right'
+                    }}
+                    transformOrigin={{
+                      vertical: 'center',
+                      horizontal: 'left'
+                    }}
+                    anchorEl={anchorEl}
+                    open={exam.id === examId}
+                    onClose={() => setExamId(-1)}
+                  >
+                    <MenuItem
+                      onClick={handleOpenExam(exam)}
                     >
-                        <ListItemIcon>
-                          <DeleteIcon />
-                        </ListItemIcon>
-                        <ListItemText primary='Delete' />
-                      </MenuItem>
-                      <MenuItem
-                        onClick={handleShareToStudents(exam)}
-                        disabled={exam.mode === 'results'}
+                      <ListItemIcon>
+                        <FileOpenIcon />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={primaryActionTextFromMode(exam.mode)}
+                      />
+                    </MenuItem>
+                    <MenuItem
+                      onClick={handleDeleteExam(exam)}
+                      disabled={exam.mode === 'answering'}
                     >
-                        <ListItemIcon>
-                          <ShareIcon />
-                        </ListItemIcon>
-                        <ListItemText primary={exam.mode !== 'editing' ? 'Copy URL' : 'Start sharing to students'} />
-                      </MenuItem>
-                    </Menu>
-                  </>
-                ))}
-              </Box>
-            </When>
+                      <ListItemIcon>
+                        <DeleteIcon />
+                      </ListItemIcon>
+                      <ListItemText primary='Delete' />
+                    </MenuItem>
+                    <MenuItem
+                      onClick={handleShareToStudents(exam)}
+                      disabled={exam.mode === 'results'}
+                    >
+                      <ListItemIcon>
+                        <ShareIcon />
+                      </ListItemIcon>
+                      <ListItemText primary={exam.mode !== 'editing' ? 'Copy URL' : 'Start sharing to students'} />
+                    </MenuItem>
+                  </Menu>
+                </>
+              ))}
+            </Box>
           </Container>
         </div>
         <Dialog
