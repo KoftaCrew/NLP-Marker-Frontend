@@ -5,4 +5,5 @@ export type StudentAnswersProps = {
 export type Student = {
   name: string;
   id: string;
+  studentSessionId: number;
 }

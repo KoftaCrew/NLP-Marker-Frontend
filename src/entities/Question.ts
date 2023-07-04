@@ -5,6 +5,7 @@ export interface Question {
   modelAnswer: ModelAnswer;
   studentAnswer?: ModelAnswer;
   segmentsMap?: number[][];
+  grade?: number;
 }
 
 export interface StudentQuestion {

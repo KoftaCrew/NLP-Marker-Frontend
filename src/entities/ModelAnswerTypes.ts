@@ -2,6 +2,9 @@ export type ModelAnswerSegment = {
   start: number;
   end: number;
   grade?: number;
+  similarity?: number;
+  mappedSegment?: number;
+  id?: number;
 }
 
 export type ModelAnswer = {
@@ -11,8 +14,11 @@ export type ModelAnswer = {
 }
 
 export type AnswerToken = {
+  id: number;
   token: string;
   isSegment: boolean;
-  mappedSegments: number[];
-  segmentIndex: number;
+  mappedSegmentId: number;
+  grade: number;
+  maxGrade?: number;
+  similarity?: number;
 }

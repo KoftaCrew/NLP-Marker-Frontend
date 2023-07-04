@@ -11,11 +11,12 @@ import { Card, Container, Divider, LinearProgress, Typography } from '@mui/mater
 import When from '../components/When';
 import { Question } from '../entities/Question';
 import axiosInstance from '../services/AxiosService';
+import { QuestionsResultsSerializer } from '../serializers/QuestionSerializer';
 
 
 const StudentsAnswers = (props: { id: number }) => {
 
-  const [selectedStudentIndex, setSelectedStudentIndex] = useState(0);
+  const [selectedStudentIndex, setSelectedStudentIndex] = useState(-1);
   const [students, setStudents] = useState<Student[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,150 +29,27 @@ const StudentsAnswers = (props: { id: number }) => {
       const response = await axiosInstance.get('/student-answer/student/', {params: {exam:props.id}});
       const fetchedStudents = response.data.map((student: any)=>({
         id: student.student_id,
-        name: student.student_name
+        name: student.student_name,
+        studentSessionId: student.id
       }));
       setStudents(fetchedStudents);
     };
     setLoading(true);
 
-    fetchStudents().then(() => (setLoading(false)));
+    fetchStudents().then(() => {setLoading(false); setSelectedStudentIndex(0);});
   }, []);
 
   useEffect(() => {
 
     const fetchExam = async () => {
-
+      if (selectedStudentIndex == -1)
+        return;
       setExamLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await axiosInstance(`/student-answer/result/${students[selectedStudentIndex].studentSessionId}`);
 
-      setQuestions([
-        {
-          title: `two lines question two lines question two lines question two lines question
-            two lines question two lines question two lines question two lines question
-            two lines question two lines question two lines question two lines question`,
-          modelAnswer: {
-            body: 'model model model model',
-            segments: [
-              {
-                start:1,
-                end:4
-              },
-              {
-                start: 9,
-                end: 11
-              },
-              {
-                start: 15,
-                end: 20
-              }
-            ]
-          },
-          studentAnswer: {
-            body: 'ans ans ans ans ans ans',
-            segments: [
-              {
-                start:1,
-                end:4
-              },
-              {
-                start: 9,
-                end: 11
-              }
-            ]
-          },
-          segmentsMap: [[0, 1], [0]]
-        },
-        {
-          title: 'test test test test',
-          modelAnswer: {
-            body: 'model model model model',
-            segments: [
-              {
-                start:1,
-                end:4
-              },
-              {
-                start: 9,
-                end: 11
-              }
-            ]
-          },
-          studentAnswer: {
-            body: 'ans ans ans ans ans ans',
-            segments: [
-              {
-                start:1,
-                end:4
-              },
-              {
-                start: 9,
-                end: 11
-              }
-            ]
-          },
-          segmentsMap: [[0, 1], [0]]
-        },
-        {
-          title: 'test test test test',
-          modelAnswer: {
-            body: 'model model model model',
-            segments: [
-              {
-                start:1,
-                end:4
-              },
-              {
-                start: 9,
-                end: 11
-              }
-            ]
-          },
-          studentAnswer: {
-            body: 'ans ans ans ans ans ans',
-            segments: [
-              {
-                start:1,
-                end:4
-              },
-              {
-                start: 9,
-                end: 11
-              }
-            ]
-          },
-          segmentsMap: [[0, 1], [0]]
-        },
-        {
-          title: 'test test test test',
-          modelAnswer: {
-            body: 'model model model model',
-            segments: [
-              {
-                start:1,
-                end:4
-              },
-              {
-                start: 9,
-                end: 11
-              }
-            ]
-          },
-          studentAnswer: {
-            body: 'ans ans ans ans ans ans',
-            segments: [
-              {
-                start:1,
-                end:4
-              },
-              {
-                start: 9,
-                end: 11
-              }
-            ]
-          },
-          segmentsMap: [[0, 1], [0]]
-        }
-      ]);
+      setQuestions(QuestionsResultsSerializer(response.data));
+
     };
     fetchExam().then(() => (setExamLoading(false)));
   }, [selectedStudentIndex]);
@@ -229,7 +107,9 @@ const StudentsAnswers = (props: { id: number }) => {
                         question={question}/>
                     </div>
                     <div className='h-fit p-1 mx-4 flex justify-end'>
-                      <Typography variant='h6'><div className='font-bold'>Grade: 10/10</div></Typography>
+                      <Typography variant='h6'><div className='font-bold'>
+                        Grade: {question.grade?.toFixed(2)}
+                      </div></Typography>
                     </div>
                     <div className='my-4'>
                       {index + 1 < questions.length &&

@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InsightsViewerProps } from "./InsightsViewerTypes";
-import { AnswerToken, ModelAnswerSegment } from "../../entities/ModelAnswerTypes";
-import { Question } from "../../entities/Question";
+import { AnswerToken, ModelAnswer } from "../../entities/ModelAnswerTypes";
 import { Tooltip } from "@mui/material";
 
 const defaultBackgroundColor = '#b1dae7';
@@ -10,99 +9,80 @@ const EmptySegmentBackgroundColor = '#e7b1b1';
 const EmptyToken : AnswerToken = {
   token:'',
   isSegment:false,
-  mappedSegments: [],
-  segmentIndex: 0
+  mappedSegmentId: -1,
+  id: -1,
+  grade: 0
 };
 
-const bodyParser = (body: string, segments: ModelAnswerSegment[]) => {
+const tokenParser = (modelAnswer: ModelAnswer) => {
   let last = 0;
-  let tokens : {token: string, isSegment: boolean}[] = [];
-  for (let index = 0; index < segments.length; ++index) {
-    if (last < segments[index].start) {
-      tokens = [...tokens, {token: body.substring(last, segments[index].start),
-        isSegment: false}];
-      last = index;
+  const tokens :AnswerToken[] = [];
+  modelAnswer.segments?.map((segment)=>{
+    if (last < segment.start) {
+      tokens.push({
+        token: modelAnswer.body.substring(last, segment.start),
+        isSegment: false,
+        id: -1,
+        mappedSegmentId: -1,
+        grade: 0
+      });
     }
-    tokens = [...tokens,
-      {
-        token: body.substring(segments[index].start,
-          segments[index].end),
-        isSegment: true
-      }
-    ];
-    last = segments[index].end;
-  }
-  if (last != body.length) {
-    tokens = [...tokens, {token: body.substring(last, body.length), isSegment: false}];
+    tokens.push({
+      token: modelAnswer.body.substring(segment.start, segment.end),
+      isSegment: true,
+      id: segment.id? segment.id: -1,
+      mappedSegmentId: segment.mappedSegment? segment.mappedSegment: -1,
+      grade: segment.grade? segment.grade: 0,
+      ...(segment.similarity && {similarity: segment.similarity})
+    });
+    last = segment.end;
+  });
+  if (last != modelAnswer.body.length) {
+    tokens.push({
+      token: modelAnswer.body.substring(last, modelAnswer.body.length),
+      isSegment: false,
+      id: -1,
+      mappedSegmentId: -1,
+      grade: 0
+    });
   }
   return tokens;
 };
 
-const Parser = (question: Question) => {
-
-  const studentSegments = question.studentAnswer?.segments? question.studentAnswer.segments:[];
-  const studentTokens = question.studentAnswer?
-    bodyParser(question.studentAnswer.body, studentSegments): [];
-
-  const modelSegments = question.modelAnswer?.segments? question.modelAnswer.segments:[];
-  const modelTokens = question.modelAnswer?
-    bodyParser(question.modelAnswer.body, modelSegments): [];
-
-  const modelSegmentsMapper :number[] = [];
-  modelTokens.map((modelToken, index) => (
-    modelToken.isSegment && modelSegmentsMapper.push(index)
-  ));
-
-  const tokenizedModel : AnswerToken[] = [];
-  const tokenizedStudent : AnswerToken[] = [];
-
-  const studentSegmentMapper = (index: number) => {
-    const unMappedSegments = question.segmentsMap? question.segmentsMap[index] : [];
-    const mappedSegments = unMappedSegments.map((index)=> (
-      index = modelSegmentsMapper[index]
-    ));
-    return mappedSegments;
-  };
-
-  let iterator = 0;
-  studentTokens.map((studentToken, index) => (
-    tokenizedStudent.push({
-      token: studentToken.token,
-      isSegment: studentToken.isSegment,
-      mappedSegments: studentToken.isSegment? studentSegmentMapper(iterator++) : [],
-      segmentIndex: index
-    })
-  ));
-
-  modelTokens.map((modelToken, index) => (
-    tokenizedModel.push({
-      token: modelToken.token,
-      isSegment: modelToken.isSegment,
-      mappedSegments: [],
-      segmentIndex: index
-    })
-  ));
-
-  tokenizedStudent.map((token, studentIndex) => (
-    token.mappedSegments.map((modelIndex) => (
-      tokenizedModel[modelIndex].mappedSegments.push(studentIndex)
-    ))
-  ));
-
-  return {tokenizedStudent:tokenizedStudent,
-    tokenizedModel:tokenizedModel};
-};
-
 const InsightsViewer = (props: InsightsViewerProps) => {
 
+  if (!props.question.studentAnswer) {
+    return <></>;
+  }
+  const [studentTokens, setStudentTokens] = useState<AnswerToken[]>(tokenParser(props.question.studentAnswer));
+  const [modelTokens, setModelTokens] = useState<AnswerToken[]>(tokenParser(props.question.modelAnswer));
 
-  const tmp = Parser(props.question);
+  useEffect(()=> {
+    const studentMapper = new Map();
+    studentTokens.map((token)=>
+      studentMapper.set(token.mappedSegmentId, {id : token.id, grade: token.grade}));
 
-  const studentTokens = tmp.tokenizedStudent;
+    const modelMapper = new Map();
+    modelTokens.map((token)=>
+      modelMapper.set(token.id, token.grade));
 
+    setModelTokens(modelTokens.map((token)=> {
+      if (studentMapper.has(token.id)) {
+        const studentToken = studentMapper.get(token.id);
+        token.mappedSegmentId= studentToken.id;
+        token.maxGrade = Math.max(token.maxGrade? token.maxGrade: 0, studentToken.grade);
+      }
+      return token;
+    }));
 
-  const modelTokens = tmp.tokenizedModel;
+    setStudentTokens(studentTokens.map((token)=> {
+      if (token.mappedSegmentId !== -1) {
+        token.maxGrade = modelMapper.get(token.mappedSegmentId);
+      }
+      return token;
+    }));
 
+  }, []);
 
   const [selectedStudentToken, setSelectedStudentToken] = useState<AnswerToken>(EmptyToken);
   const [selectedModelToken, setSelectedModelToken] = useState<AnswerToken>(EmptyToken);
@@ -112,7 +92,6 @@ const InsightsViewer = (props: InsightsViewerProps) => {
     setSelectedStudentToken(EmptyToken);
     setSelectedModelToken(EmptyToken);
   };
-
 
   return (
     <div className='bg-white w-full'>
@@ -128,18 +107,23 @@ const InsightsViewer = (props: InsightsViewerProps) => {
         <div className='m-2 p-2 h-52 overflow-y-auto bg-white
             rounded border-solid border-[1px] border-gray-500/25 shadow-md w-1/2'>
           {
-            studentTokens.map((studentToken, index) =>(
+            studentTokens.map((studentToken) =>(
               <Tooltip
-                title='test'
+                title={ <div className='text-lg'>
+                  <span className='font-bold'>Grade: </span>
+                  <span>{studentToken.grade? Number.isInteger(studentToken.grade)?
+                    studentToken.grade: studentToken.grade.toFixed(2) : 0}/{studentToken.maxGrade}</span>
+                  {studentToken.similarity && <div>Similarity: {Math.round(studentToken.similarity * 100)}%</div>}
+                </div>}
                 followCursor
                 arrow
                 disableHoverListener={!studentToken.isSegment}>
                 <span
                   style={{
                     backgroundColor: studentToken.isSegment &&
-                (selectedStudentToken.segmentIndex == index ||
-                  selectedModelToken.mappedSegments.includes(studentToken.segmentIndex))
-                      ? (studentToken.mappedSegments.length > 0?
+                (selectedStudentToken.id === studentToken.id ||
+                  selectedModelToken.mappedSegmentId === studentToken.id)
+                      ? (studentToken.mappedSegmentId !== -1?
                         defaultBackgroundColor : EmptySegmentBackgroundColor) : "white"
                   }}
                   onMouseEnter={() => {
@@ -156,18 +140,21 @@ const InsightsViewer = (props: InsightsViewerProps) => {
         <div className='m-2 p-2 h-52 overflow-y-auto bg-white
             rounded border-solid border-[1px] border-gray-500/25 shadow-md w-1/2'>
           {
-            modelTokens.map((modelToken, index) =>
+            modelTokens.map((modelToken) =>
               <Tooltip
-                title='test'
+                title={ <div className='text-lg'>
+                  <span className='font-bold'>Grade: </span>
+                  <span>{modelToken.maxGrade? modelToken.maxGrade.toFixed(2) : 0}/{modelToken.grade ?? 'N/A'}</span>
+                </div>}
                 followCursor
                 arrow
                 disableHoverListener={!modelToken.isSegment}>
                 <span
                   style={{
                     backgroundColor: modelToken.isSegment &&
-                  (selectedModelToken.segmentIndex == index ||
-                    selectedStudentToken.mappedSegments.includes(modelToken.segmentIndex))
-                      ? (modelToken.mappedSegments.length > 0?
+                  (selectedModelToken.id === modelToken.id ||
+                    selectedStudentToken.mappedSegmentId === modelToken.id)
+                      ? (modelToken.mappedSegmentId !== -1?
                         defaultBackgroundColor : EmptySegmentBackgroundColor) : "white"
                   }}
                   onMouseEnter={() => {

@@ -15,8 +15,7 @@ const StudentsExamEntry = () => {
   const [error, setError] = useState('');
   const [examName, setExamName] = useState('');
   const [examView, setExamView] = useState(false);
-  const [student, setStudent] = useState<Student>({name:'', id:''});
-  const [studentSessionId, setStudentSessionId] = useState(-1);
+  const [student, setStudent] = useState<Student>({name:'', id:'', studentSessionId: -1});
 
   const params = useParams();
   const examId = Number(params.examId);
@@ -37,14 +36,18 @@ const StudentsExamEntry = () => {
       name: (event.target as HTMLFormElement).studentName.value,
       id: (event.target as HTMLFormElement).studentID.value
     };
-    setStudent(newStudent);
     try{
       const response = await unauthenticatedAxiosInstance.post('/student-answer/student/', {
         exam: examId,
         student_id: newStudent.id,
         student_name: newStudent.name
       });
-      setStudentSessionId(response.data.id);
+      const fetchedStudent = response.data;
+      setStudent({
+        name: fetchedStudent.student_name,
+        id: fetchedStudent.student_id,
+        studentSessionId: fetchedStudent.id
+      });
       setExamView(true);
     }catch (error) {
       if (error instanceof AxiosError) {
@@ -60,7 +63,7 @@ const StudentsExamEntry = () => {
 
   return (
     <>
-      {examView? <StudentsExam studentSessionId={studentSessionId} examId={examId} student={student}/> :
+      {examView? <StudentsExam examId={examId} student={student}/> :
         <div className='w-full h-full flex justify-center content-center flex-wrap'>
           <Box
             component='form'

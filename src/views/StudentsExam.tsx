@@ -20,7 +20,7 @@ import { LoadingButton } from "@mui/lab";
 import SubmittedExam from "./SubmittedExam";
 
 
-const StudentsExam = (props: { studentSessionId: number, examId: number, student: Student }) => {
+const StudentsExam = (props: { examId: number, student: Student }) => {
 
   const [loading, setLoading] = useState(true);
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -69,7 +69,7 @@ const StudentsExam = (props: { studentSessionId: number, examId: number, student
 
   const handleSubmitOnClick = () => {
     setSubmitLoading(true);
-    unauthenticatedAxiosInstance.patch(`/student-answer/submit/${props.studentSessionId}/`, {
+    unauthenticatedAxiosInstance.patch(`/student-answer/submit/${props.student.studentSessionId}/`, {
       student_answer: studentExam.questions.map((question)=>({
         question: question.id,
         text: question.studentAnswer
