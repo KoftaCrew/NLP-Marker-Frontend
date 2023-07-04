@@ -55,6 +55,14 @@ const StudentsAnswers = (props: { id: number }) => {
   }, [selectedStudentIndex]);
 
 
+  const calculateTotalGrade = (index : number) => {
+    let totalGrade = 0;
+    questions[index].modelAnswer.segments?.map((segment) => {
+      totalGrade += segment.grade?? 0;
+    });
+    return totalGrade;
+  };
+
   return (
 
     <div className='flex w-full h-full '>
@@ -108,7 +116,7 @@ const StudentsAnswers = (props: { id: number }) => {
                     </div>
                     <div className='h-fit p-1 mx-4 flex justify-end'>
                       <Typography variant='h6'><div className='font-bold'>
-                        Grade: {question.grade?.toFixed(2)}
+                        Grade: {question.grade?.toFixed(2)}/{calculateTotalGrade(index)}
                       </div></Typography>
                     </div>
                     <div className='my-4'>
