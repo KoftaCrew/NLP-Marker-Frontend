@@ -189,7 +189,7 @@ const Dashboard = () => {
 
   return (<>
     <When isTrue={mode === 'idle'}>
-      <div className='flex'>
+      <div className='flex h-full'>
         <Drawer
           variant='permanent'
           sx={{
