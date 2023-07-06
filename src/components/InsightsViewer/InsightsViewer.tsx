@@ -9,7 +9,7 @@ const EmptySegmentBackgroundColor = '#e7b1b1';
 const EmptyToken : AnswerToken = {
   token:'',
   isSegment:false,
-  mappedSegmentId: -1,
+  mappedSegmentId: [],
   id: -1,
   grade: 0
 };
@@ -23,7 +23,7 @@ const tokenParser = (modelAnswer: ModelAnswer) => {
         token: modelAnswer.body.substring(last, segment.start),
         isSegment: false,
         id: -1,
-        mappedSegmentId: -1,
+        mappedSegmentId: [],
         grade: 0
       });
     }
@@ -31,7 +31,7 @@ const tokenParser = (modelAnswer: ModelAnswer) => {
       token: modelAnswer.body.substring(segment.start, segment.end),
       isSegment: true,
       id: segment.id? segment.id: -1,
-      mappedSegmentId: segment.mappedSegment? segment.mappedSegment: -1,
+      mappedSegmentId: segment.mappedSegment? [segment.mappedSegment]: [],
       grade: segment.grade? segment.grade: 0,
       ...(segment.similarity && {similarity: segment.similarity})
     });
@@ -42,7 +42,7 @@ const tokenParser = (modelAnswer: ModelAnswer) => {
       token: modelAnswer.body.substring(last, modelAnswer.body.length),
       isSegment: false,
       id: -1,
-      mappedSegmentId: -1,
+      mappedSegmentId: [],
       grade: 0
     });
   }
@@ -66,18 +66,21 @@ const InsightsViewer = (props: InsightsViewerProps) => {
     modelTokens.map((token)=>
       modelMapper.set(token.id, token.grade));
 
+
     setModelTokens(modelTokens.map((token)=> {
-      if (studentMapper.has(token.id)) {
-        const studentToken = studentMapper.get(token.id);
-        token.mappedSegmentId= studentToken.id;
-        token.maxGrade = Math.max(token.maxGrade? token.maxGrade: 0, studentToken.grade);
-      }
+      studentTokens.map((studentToken) => {
+        if (studentToken.mappedSegmentId.length &&
+          studentToken.mappedSegmentId[0] === token.id) {
+          token.mappedSegmentId.push(studentToken.id);
+          token.maxGrade = Math.max(token.maxGrade? token.maxGrade: 0, studentToken.grade);
+        }
+      });
       return token;
     }));
 
     setStudentTokens(studentTokens.map((token)=> {
-      if (token.mappedSegmentId !== -1) {
-        token.maxGrade = modelMapper.get(token.mappedSegmentId);
+      if (token.mappedSegmentId.length != 0) {
+        token.maxGrade = modelMapper.get(token.mappedSegmentId[0]);
       }
       return token;
     }));
@@ -122,8 +125,8 @@ const InsightsViewer = (props: InsightsViewerProps) => {
                   style={{
                     backgroundColor: studentToken.isSegment &&
                 (selectedStudentToken.id === studentToken.id ||
-                  selectedModelToken.mappedSegmentId === studentToken.id)
-                      ? (studentToken.mappedSegmentId !== -1?
+                  selectedModelToken.mappedSegmentId.includes(studentToken.id))
+                      ? (studentToken.mappedSegmentId.length?
                         defaultBackgroundColor : EmptySegmentBackgroundColor) : "white"
                   }}
                   onMouseEnter={() => {
@@ -153,8 +156,8 @@ const InsightsViewer = (props: InsightsViewerProps) => {
                   style={{
                     backgroundColor: modelToken.isSegment &&
                   (selectedModelToken.id === modelToken.id ||
-                    selectedStudentToken.mappedSegmentId === modelToken.id)
-                      ? (modelToken.mappedSegmentId !== -1?
+                    selectedStudentToken.mappedSegmentId.includes(modelToken.id))
+                      ? (modelToken.mappedSegmentId.length?
                         defaultBackgroundColor : EmptySegmentBackgroundColor) : "white"
                   }}
                   onMouseEnter={() => {

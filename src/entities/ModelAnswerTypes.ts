@@ -17,7 +17,7 @@ export type AnswerToken = {
   id: number;
   token: string;
   isSegment: boolean;
-  mappedSegmentId: number;
+  mappedSegmentId: number[];
   grade: number;
   maxGrade?: number;
   similarity?: number;

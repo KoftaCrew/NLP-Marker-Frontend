@@ -4,7 +4,6 @@ export interface Question {
   title: string;
   modelAnswer: ModelAnswer;
   studentAnswer?: ModelAnswer;
-  segmentsMap?: number[][];
   grade?: number;
 }
 
