@@ -45,7 +45,6 @@ const StudentsAnswers = (props: { id: number }) => {
       if (selectedStudentIndex == -1)
         return;
       setExamLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
       const response = await axiosInstance(`/student-answer/result/${students[selectedStudentIndex].studentSessionId}`);
 
       setQuestions(QuestionsResultsSerializer(response.data));
